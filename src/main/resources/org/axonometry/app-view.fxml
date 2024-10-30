@@ -12,38 +12,15 @@
     </center>
     <left>
         <TabPane focusTraversable="false">
-            <Tab  closable="false" text="View">
-                <VBox prefHeight="344.0" prefWidth="175.0" styleClass="sidebar" BorderPane.alignment="CENTER">
-                    <padding>
-                        <Insets left="25.0" right="25.0" top="15.0"/>
-                    </padding>
-                    <Label text="X"/>
-                    <Slider blockIncrement="1.0" majorTickUnit="90.0" max="360.0" showTickLabels="true"
-                            showTickMarks="true" fx:id="xSlider"/>
-                    <Label text="Y"/>
-                    <Slider fx:id="ySlider" blockIncrement="1.0" majorTickUnit="90.0" max="360.0" showTickLabels="true"
-                            showTickMarks="true" snapToTicks="true"/>
-                    <Label text="Z"/>
-                    <Slider fx:id="zSlider" blockIncrement="1.0" majorTickUnit="90.0" max="360.0" showTickLabels="true"
-                            showTickMarks="true" snapToTicks="true"/>
-                    <Label text="Scale"/>
-                    <Slider fx:id="scaleSlider" blockIncrement="0.25" majorTickUnit="1" max="5" showTickLabels="true"
-                            showTickMarks="true" snapToTicks="true" value="1"/>
-                </VBox>
-            </Tab>
             <Tab closable="false" text="Vertices">
                 <VBox prefHeight="344.0" prefWidth="175.0" BorderPane.alignment="CENTER">
                     <padding>
                         <Insets left="25.0" right="25.0" top="15.0"/>
                     </padding>
-                    <TextField fx:id="nameValue" promptText="Name"/>
-                    <TextField promptText="X" fx:id="xValue"/>
-                    <TextField fx:id="yValue" promptText="Y"/>
-                    <TextField fx:id="zValue" promptText="Z"/>
-                    <Button onAction="#createVertex" text="Create vertex"/>
+                    <TextField fx:id="vertexField" promptText="A (x, y, z)"/>
                     <ListView fx:id="objectsList" prefHeight="200.0" prefWidth="200.0"/>
                     <Button onAction="#deleteObjects" text="Delete vertices"/>
-                    <Button onAction="#createPolygon" text="Create polygon"/>
+                    <Button onAction="#createPlane" text="Create plane"/>
                 </VBox>
             </Tab>
         </TabPane>

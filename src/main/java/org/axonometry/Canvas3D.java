@@ -10,8 +10,6 @@ import javafx.util.Duration;
 import org.axonometry.geometry.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Canvas3D extends Canvas {
     private final GraphicsContext gc;
@@ -35,10 +33,10 @@ public class Canvas3D extends Canvas {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        Polygon triangle = new Polygon(new Vertex3D[]{
-                new Vertex3D("A", new Coordinates(new double[][]{{100}, {0}, {0}})),
-                new Vertex3D("B", new Coordinates(new double[][]{{0}, {100}, {0}})),
-                new Vertex3D("C", new Coordinates(new double[][]{{0}, {0}, {100}}))
+        Plane triangle = new Plane(new Vertex3D[]{
+                new Vertex3D("A", new Vector3D(new double[][]{{100}, {0}, {0}})),
+                new Vertex3D("B", new Vector3D(new double[][]{{0}, {100}, {0}})),
+                new Vertex3D("C", new Vector3D(new double[][]{{0}, {0}, {100}}))
         });
 
         objects.add(new CoordinateSystem());
@@ -55,44 +53,32 @@ public class Canvas3D extends Canvas {
         }
     }
 
-    public void transform(double rx, double ry, double rz, double scale) {
+    public void transform(double dx, double dy, double dz, double rx, double ry, double rz, double scale) {
         for (int i = 0; i < transformedObjects.size(); i++) {
-            transformedObjects.set(i, objects.get(i).transform(rx, ry, rz, scale));
+            transformedObjects.set(i, objects.get(i).transform(dx, dy, dz, rx, ry, rz, scale));
         }
     }
 
-    public void translate(double dx, double dy, double dz) {
-        for (int i = 0; i < transformedObjects.size(); i++) {
-            transformedObjects.set(i, objects.get(i).translate(dx, dy, dz));
-        }
-    }
-
-    public void addVertex(String name, double x, double y, double z) {
-        Vertex3D vertex = new Vertex3D(name, new Coordinates(new double[][]{{x}, {y}, {z}}));
+    public void addVertex(Vertex3D vertex) {
         objects.add(vertex);
         transformedObjects.add(vertex);
     }
 
-    public void addPolygon(ObservableList<Integer> ids) {
+    public void addPlane(ObservableList<Integer> ids) {
         Vertex3D[] vertices = new Vertex3D[ids.size()];
         for (int i = 0; i < ids.size(); i++) {
             int objectId = ids.get(i);
             vertices[i] = (Vertex3D) objects.get(objectId);
         }
-        Polygon polygon = new Polygon(vertices);
-        objects.add(polygon);
-        transformedObjects.add(polygon);
+        Plane plane = new Plane(vertices);
+        objects.add(plane);
+        transformedObjects.add(plane);
     }
 
     public void removeObject(ObservableList<Integer> ids) {
-        for (int i : ids) {
-            if (objects.get(i) instanceof Polygon) {
-                List<Vertex3D> vertices = Arrays.asList(((Polygon) objects.get(i)).destruct());
-                objects.addAll(vertices);
-                transformedObjects.addAll(vertices);
-            }
-            objects.remove(i);
-            transformedObjects.remove(i);
+        for (int i = ids.size() - 1; i >= 0; i--) {
+            objects.remove((int) ids.get(i));
+            transformedObjects.remove((int) ids.get(i));
         }
     }
 
