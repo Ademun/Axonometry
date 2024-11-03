@@ -20,12 +20,13 @@ import java.util.stream.Collectors;
 public class Canvas3DController {
     @FXML
     public CanvasPane canvasPane;
-    public TextField nameValue;
     public TextField vertexField;
     public ListView<String> objectsList;
 
-    static public HashSet<String> pressedKeys;
+    static public HashSet<KeyCode> pressedKeys;
     private double scale;
+    private double dX;
+    private double dZ;
     private double mousePosX;
     private double mousePosY;
     private double xRotation;
@@ -46,7 +47,6 @@ public class Canvas3DController {
         setObjectsList(canvasPane.getCanvas().getObjects());
     }
 
-
     public void initialize() {
         scale = 1;
         xRotation = -27;
@@ -55,7 +55,7 @@ public class Canvas3DController {
         transformCanvas();
         setListeners();
         setObjectsList(canvasPane.getCanvas().getObjects());
-        pressedKeys = new HashSet<String>();
+        pressedKeys = new HashSet<>();
         objectsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
@@ -79,30 +79,27 @@ public class Canvas3DController {
                     mousePosY = event.getSceneY();
                 });
                 canvasPane.getScene().setOnScroll(event -> {
-                    System.out.println(event.getDeltaY());
                     scale += event.getDeltaY() * 0.025;
                     scale = Math.max(1, Math.min(50, scale));
                     transformCanvas();
                 });
                 canvasPane.getScene().setOnKeyPressed(event -> {
-                    System.out.println(event.getCode().toString());
-                    switch (event.getCode().toString()) {
-                        case "W":
-                            transformCanvas();
-                            break;
-                        case "A":
-                            transformCanvas();
-                            break;
-                        case "S":
-                            transformCanvas();
-                            break;
-                        case "D":
-                            transformCanvas();
-                            break;
-                        default:
-                            break;
+                    KeyCode key = event.getCode();
+                    if (key.equals(KeyCode.W)) {
+                        dZ += 5;
                     }
+                    if (key.equals(KeyCode.A)) {
+                        dX += 5;
+                    }
+                    if (key.equals(KeyCode.S)) {
+                        dZ -= 5;
+                    }
+                    if (key.equals(KeyCode.D)) {
+                        dX -= 5;
+                    }
+                    transformCanvas();
                 });
+                canvasPane.getScene().setOnMouseClicked(event -> canvasPane.getCanvas().getClickedObject(event.getX() - 175.2, event.getY() - 25.6));
             }
         });
         vertexField.setOnKeyPressed(event -> {
@@ -118,7 +115,7 @@ public class Canvas3DController {
 
     private void transformCanvas() {
         canvasPane.getCanvas().transform(
-                0, 0, 0,
+                dX, 0, dZ,
                 xRotation * Math.PI / 180,
                 yRotation * Math.PI / 180,
                 zRotation * Math.PI / 180,

@@ -1,14 +1,17 @@
 package org.axonometry.geometry;
 
+import java.util.Arrays;
+
 public class Vector3D extends Matrix {
     private final double x;
     private final double y;
     private final double z;
     public Vector3D(double[][] data) {
         super(data);
-        if (data.length > 3) {
-            throw new IllegalArgumentException("Vector3D can have only 3 values");
-        }
+        if (data.length > 3) throw new IllegalArgumentException("Vector3D can have only 3 values");
+        Arrays.stream(data).filter(coordinate -> coordinate.length != 1).forEach(coordinate -> {
+            throw new IllegalArgumentException("Invalid data");
+        });
         x = getData()[0][0];
         y = getData()[1][0];
         z = getData()[2][0];
@@ -31,7 +34,7 @@ public class Vector3D extends Matrix {
         return new Vector3D(super.sub(vec).getData());
     }
 
-    public Vector3D multi(Vector3D n) {
+    public Vector3D multi(double n) {
         return new Vector3D(super.multi(n).getData());
     }
     public Vector3D div(double n) {
@@ -86,15 +89,23 @@ public class Vector3D extends Matrix {
         return true;
     }
 
+    public String toString() {
+        return "Vector3D{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
+
     public double getX() {
-        return getData()[0][0];
+        return x;
     }
 
     public double getY() {
-        return getData()[1][0];
+        return y;
     }
 
     public double getZ() {
-        return getData()[2][0];
+        return z;
     }
 }

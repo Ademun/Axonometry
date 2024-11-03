@@ -10,6 +10,9 @@ import javafx.util.Duration;
 import org.axonometry.geometry.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.IntStream;
 
 public class Canvas3D extends Canvas {
     private final GraphicsContext gc;
@@ -24,20 +27,16 @@ public class Canvas3D extends Canvas {
     }
 
     private void init() {
-        this.setWidth(1960);
-        this.setHeight(1080);
-
+        this.setFocusTraversable(true);
+        this.requestFocus();
+        this.setOnMouseClicked(event -> System.out.println(event.getX() + " " + event.getY()));
         Timeline timeline = new Timeline();
         KeyFrame updateLoop = new KeyFrame(Duration.seconds(0.01), e -> this.update());
         timeline.getKeyFrames().add(updateLoop);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        Plane triangle = new Plane(new Vertex3D[]{
-                new Vertex3D("A", new Vector3D(new double[][]{{100}, {0}, {0}})),
-                new Vertex3D("B", new Vector3D(new double[][]{{0}, {100}, {0}})),
-                new Vertex3D("C", new Vector3D(new double[][]{{0}, {0}, {100}}))
-        });
+        Vertex3D triangle = new Vertex3D("A", new Vector3D(new double[][]{{100}, {0}, {0}}));
 
         objects.add(new CoordinateSystem());
         objects.add(triangle);
@@ -54,9 +53,10 @@ public class Canvas3D extends Canvas {
     }
 
     public void transform(double dx, double dy, double dz, double rx, double ry, double rz, double scale) {
-        for (int i = 0; i < transformedObjects.size(); i++) {
-            transformedObjects.set(i, objects.get(i).transform(dx, dy, dz, rx, ry, rz, scale));
-        }
+        IntStream.range(0, transformedObjects.size())
+                .forEach(i -> transformedObjects.set(i, objects.get(i)
+                        .transform(dx, dy, dz, rx, ry, rz, scale)
+                ));
     }
 
     public void addVertex(Vertex3D vertex) {
@@ -66,10 +66,7 @@ public class Canvas3D extends Canvas {
 
     public void addPlane(ObservableList<Integer> ids) {
         Vertex3D[] vertices = new Vertex3D[ids.size()];
-        for (int i = 0; i < ids.size(); i++) {
-            int objectId = ids.get(i);
-            vertices[i] = (Vertex3D) objects.get(objectId);
-        }
+        IntStream.range(0, ids.size()).forEach(i -> vertices[i] = (Vertex3D) objects.get(ids.get(i)));
         Plane plane = new Plane(vertices);
         objects.add(plane);
         transformedObjects.add(plane);
@@ -82,6 +79,19 @@ public class Canvas3D extends Canvas {
         }
     }
 
+    public GeometricalObject getClickedObject(double x, double y) {
+        System.out.println(x + " " + y);
+        return transformedObjects.stream()
+                .filter(object -> object instanceof Vertex3D)
+                .peek(object -> ((Vertex3D) object).setIsSelected(((Vertex3D) object).isClicked(x, y)))
+                .sorted(Comparator.comparing(object ->
+                        Arrays.stream(object.getVertices())
+                                .sorted(Comparator.comparing(vertex -> vertex.getCoordinates().getZ()))
+                                .toArray(Vertex3D[]::new)
+                                [0].getCoordinates().getZ()
+                ))
+                .toList().get(0);
+    }
     public ArrayList<GeometricalObject> getObjects() {
         return objects;
     }

@@ -20,15 +20,14 @@ public class Matrix {
     public Matrix add(Matrix matrix) {
         if (rows != matrix.getRows() || cols != matrix.getCols()) {
             throw new IllegalArgumentException("Matrices can't be summed");
-        } else {
-            double[][] newData = new double[rows][cols];
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    newData[i][j] = data[i][j] + matrix.getData()[i][j];
-                }
-            }
-            return new Matrix(newData);
         }
+        double[][] newData = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                newData[i][j] = data[i][j] + matrix.getData()[i][j];
+            }
+        }
+        return new Matrix(newData);
     }
 
     public Matrix sub(Matrix matrix) {
@@ -86,32 +85,26 @@ public class Matrix {
         return new Matrix(newData);
     }
 
-    public void print() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++)
-                System.out.printf("%9.4f ", data[i][j]);
-            System.out.println();
-        }
-    }
-
-    public static Matrix getRotationalMatrix(double deg, String axis) {
-        return switch (axis) {
-            case "x" -> new Matrix(new double[][]{
-                    {1, 0, 0},
-                    {0, Math.cos(deg), -1 * Math.sin(deg)},
-                    {0, Math.sin(deg), Math.cos(deg)}});
-            case "y" -> new Matrix(new double[][]{
-                    {Math.cos(deg), 0, Math.sin(deg)},
-                    {0, 1, 0},
-                    {-1 * Math.sin(deg), 0, Math.cos(deg)}
-            });
-            case "z" -> new Matrix(new double[][]{
-                    {Math.cos(deg), -1 * Math.sin(deg), 0},
-                    {Math.sin(deg), Math.cos(deg), 0},
-                    {0, 0, 1}
-            });
-            default -> throw new IllegalArgumentException("Illegal axis");
-        };
+    public static Matrix getRotationalMatrix(Vector3D vec, double rad) {
+        vec = vec.ort();
+        double cosTheta = Math.cos(rad);
+        double sinTheta = Math.sin(rad);
+        return new Matrix(new double[][]{
+                {cosTheta + vec.getX() * vec.getX() * (1 - cosTheta),
+                        vec.getX() * vec.getY() * (1 - cosTheta) - vec.getZ() * sinTheta,
+                        vec.getX() * vec.getZ() * (1 - cosTheta) + vec.getY() * sinTheta
+                },
+                {
+                        vec.getY() * vec.getX() * (1 - cosTheta) + vec.getZ() * sinTheta,
+                        cosTheta + vec.getY() * vec.getY() * (1 - cosTheta),
+                        vec.getY() * vec.getZ() * (1 - cosTheta) - vec.getX() * sinTheta
+                },
+                {
+                        vec.getZ() * vec.getX() * (1 - cosTheta) - vec.getY() * sinTheta,
+                        vec.getZ() * vec.getY() * (1 - cosTheta) + vec.getX() * sinTheta,
+                        cosTheta + vec.getZ() * vec.getZ() * (1 - cosTheta)
+                }
+        });
     }
 
     public int getRows() {

@@ -8,7 +8,7 @@ public class CanvasPane extends Region {
     private final Canvas3D canvas ;
     private Consumer<Canvas3D> repaint ;
     public CanvasPane() {
-        this.canvas = new Canvas3D() ;
+        this.canvas = new Canvas3D();
         getChildren().add(canvas);
         repaint = c -> {} ;
     }
