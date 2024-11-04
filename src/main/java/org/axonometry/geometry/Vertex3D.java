@@ -1,15 +1,14 @@
 package org.axonometry.geometry;
 
-import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.axonometry.geometry.CoordinateSystem.transformForDrawing;
 
 public class Vertex3D implements GeometricalObject, Clickable {
     private String name;
@@ -28,10 +27,8 @@ public class Vertex3D implements GeometricalObject, Clickable {
         this.radius = 2;
     }
 
-    public Vertex3D transform(double dx, double dy, double dz, double rx, double ry, double rz, double scale) {
-        Vector3D dVector3D = new Vector3D(new double[][]{{dx}, {dy}, {dz}});
-        Vertex3D translated = new Vertex3D(name, new Vector3D(coordinates.add(dVector3D).getData()));
-        Vector3D transformed = new Vector3D(translated
+    public Vertex3D transform(double rx, double ry, double rz, double scale) {
+        Vector3D transformed = new Vector3D(this
                 .rotate(Matrix.getRotationalMatrix(new Vector3D(new double[][]{{1}, {0}, {0}}), rx))
                 .rotate(Matrix.getRotationalMatrix(new Vector3D(new double[][]{{0}, {1}, {0}}), ry))
                 .rotate(Matrix.getRotationalMatrix(new Vector3D(new double[][]{{0}, {0}, {1}}), rz))
@@ -50,28 +47,27 @@ public class Vertex3D implements GeometricalObject, Clickable {
     }
 
     public void draw(GraphicsContext gc) {
-        Rectangle2D bounds = Screen.getPrimary().getBounds();
         if (isSelected) {
             gc.setFill(Color.rgb(255, 140, 0, 0.5));
             gc.fillOval(
-                    -1 * this.coordinates.getX() - radius * 2 + + bounds.getMaxX() / 2,
-                    -1 * this.coordinates.getZ() - radius * 2 + bounds.getMaxY() / 2, radius * 4, radius * 4
+                    transformForDrawing(this.coordinates).getX() - radius * 2,
+                    transformForDrawing(this.coordinates).getZ() - radius * 2, radius * 4, radius * 4
             );
             gc.setStroke(Color.ORANGE);
             gc.strokeOval(
-                    -1 * this.coordinates.getX() - radius * 2 + bounds.getMaxX() / 2,
-                    -1 * this.coordinates.getZ() - radius * 2 + bounds.getMaxY() / 2, radius * 4, radius * 4
+                    transformForDrawing(this.coordinates).getX() - radius * 2,
+                    transformForDrawing(this.coordinates).getZ() - radius * 2, radius * 4, radius * 4
             );
         }
         gc.setFill(Color.WHITE);
         gc.fillOval(
-                -1 * this.coordinates.getX() - radius + bounds.getMaxX() / 2,
-                -1 * this.coordinates.getZ() - radius + bounds.getMaxY() / 2, radius * 2, radius * 2
+                transformForDrawing(this.coordinates).getX() - radius,
+                transformForDrawing(this.coordinates).getZ() - radius, radius * 2, radius * 2
         );
         gc.fillText(
                 name,
-                -1 * this.coordinates.getX() - radius * 2 + bounds.getMaxX() / 2,
-                -1 * this.coordinates.getZ() - radius * 4 + bounds.getMaxY() / 2
+                transformForDrawing(this.coordinates).getX() - radius * 2,
+                transformForDrawing(this.coordinates).getZ() - radius * 4
         );
     }
 
@@ -95,8 +91,8 @@ public class Vertex3D implements GeometricalObject, Clickable {
         }), 2);
     }
     public boolean isClicked(double x, double y) {
-        Rectangle2D bounds = Screen.getPrimary().getBounds();
-        return Math.pow(x - (-1 * this.coordinates.getX() - radius + bounds.getMaxX() / 2), 2) + Math.pow(y - (-1 * this.coordinates.getZ() - radius + bounds.getMaxY() / 2), 2) <= 48;
+        int CLICK_AREA = 48;
+        return Math.pow(x - transformForDrawing(this.coordinates).getX() - radius, 2) + Math.pow(y - transformForDrawing(this.coordinates).getZ() - radius / 2, 2) <= CLICK_AREA;
     }
 
     public String toString() {

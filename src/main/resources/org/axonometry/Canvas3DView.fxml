@@ -39,6 +39,17 @@
         </MenuBar>
     </top>
     <bottom>
-        <HBox prefHeight="30.0" prefWidth="800.0" BorderPane.alignment="CENTER"/>
+        <HBox prefHeight="30.0" prefWidth="800.0" BorderPane.alignment="CENTER" styleClass="status__panel">
+            <Label styleClass="status__panel__text" fx:id="objectCount">
+                <padding>
+                    <Insets>
+                        <left>15</left>
+                        <right>25</right>
+                    </Insets>
+                </padding>
+                Объекты:
+            </Label>
+            <Label styleClass="status__panel__text" fx:id="rotation">X: Y: Z:</Label>
+        </HBox>
     </bottom>
 </BorderPane>

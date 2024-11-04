@@ -9,9 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.axonometry.geometry.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class Canvas3D extends Canvas {
@@ -32,56 +30,23 @@ public class Canvas3D extends Canvas {
         timeline.getKeyFrames().add(updateLoop);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-
-        Plane Pi1 = new Plane(new Vertex3D[]{
-                new Vertex3D("", new Vector3D(new double[][]{{200}, {0}, {0}})),
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {200}, {0}})),
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {0}, {0}}))
-        });
-        Plane Pi2 = new Plane(new Vertex3D[]{
-                new Vertex3D("", new Vector3D(new double[][]{{200}, {0}, {0}})),
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {0}, {200}})),
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {0}, {0}}))
-        });
-        Plane Pi3 = new Plane(new Vertex3D[]{
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {0}, {0}})),
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {0}, {200}})),
-                new Vertex3D("", new Vector3D(new double[][]{{0}, {200}, {0}}))
-        });
-        Vertex3D triangle = new Vertex3D("A", new Vector3D(new double[][]{{100}, {100}, {100}}));
-        Vertex3D projection1 = triangle.projectOn(Pi1, "A'");
-        Vertex3D projection2 = triangle.projectOn(Pi2, "A''");
-        Vertex3D projection3 = triangle.projectOn(Pi3, "A'''");
-        objects.add(new CoordinateSystem());
-        objects.add(Pi1);
-        objects.add(Pi2);
-        objects.add(Pi3);
-        objects.add(triangle);
-        objects.add(projection1);
-        objects.add(projection2);
-        objects.add(projection3);
-        transformedObjects.add(new CoordinateSystem());
-        transformedObjects.add(Pi1);
-        transformedObjects.add(Pi2);
-        transformedObjects.add(Pi3);
-        transformedObjects.add(triangle);
-        transformedObjects.add(projection1);
-        transformedObjects.add(projection2);
-        transformedObjects.add(projection3);
+        CoordinateSystem rootCoordinateSystem = new CoordinateSystem();
+        objects.add(rootCoordinateSystem);
+        transformedObjects.add(rootCoordinateSystem);
     }
 
     public void update() {
-        gc.setFill(Color.BLACK);
+        gc.setFill(Color.rgb(1, 4, 9));
         gc.fillRect(0, 0, 1960, 1080);
         for (GeometricalObject object : transformedObjects) {
             object.draw(gc);
         }
     }
 
-    public void transform(double dx, double dy, double dz, double rx, double ry, double rz, double scale) {
+    public void transform(double rx, double ry, double rz, double scale) {
         IntStream.range(0, transformedObjects.size())
                 .forEach(i -> transformedObjects.set(i, objects.get(i)
-                        .transform(dx, dy, dz, rx, ry, rz, scale)
+                        .transform(rx, ry, rz, scale)
                 ));
     }
 
@@ -89,22 +54,18 @@ public class Canvas3D extends Canvas {
         objects.add(vertex);
         transformedObjects.add(vertex);
     }
-    public void castProjectionsFromVertex(Vertex3D vertex) {
-    }
 
     public void addPlane(ObservableList<Integer> ids) {
+        Random random = new Random();
         Vertex3D[] vertices = new Vertex3D[ids.size()];
         IntStream.range(0, ids.size()).forEach(i -> vertices[i] = (Vertex3D) objects.get(ids.get(i)));
-        Plane plane = new Plane(vertices);
+        Plane plane = new Plane(vertices, Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.25));
         objects.add(plane);
         transformedObjects.add(plane);
     }
-
-    public void removeObject(ObservableList<Integer> ids) {
-        for (int i = ids.size() - 1; i >= 0; i--) {
-            objects.remove((int) ids.get(i));
-            transformedObjects.remove((int) ids.get(i));
-        }
+    public void removeObjects(ArrayList<GeometricalObject> selectedObjects) {
+        objects.removeAll(selectedObjects);
+        transformedObjects.removeAll(selectedObjects);
     }
 
     public GeometricalObject getClickedObject(double x, double y) {

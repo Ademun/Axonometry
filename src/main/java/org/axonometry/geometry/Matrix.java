@@ -18,9 +18,7 @@ public class Matrix {
     }
 
     public Matrix add(Matrix matrix) {
-        if (rows != matrix.getRows() || cols != matrix.getCols()) {
-            throw new IllegalArgumentException("Matrices can't be summed");
-        }
+        if (rows != matrix.getRows() || cols != matrix.getCols()) throw new IllegalArgumentException("Matrices can't be summed");
         double[][] newData = new double[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -31,17 +29,14 @@ public class Matrix {
     }
 
     public Matrix sub(Matrix matrix) {
-        if (rows != matrix.getRows() || cols != matrix.getCols()) {
-            throw new IllegalArgumentException("Matrices can't be summed");
-        } else {
-            double[][] newData = new double[rows][cols];
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    newData[i][j] = data[i][j] - matrix.getData()[i][j];
-                }
+        if (rows != matrix.getRows() || cols != matrix.getCols()) throw new IllegalArgumentException("Matrices can't be summed");
+        double[][] newData = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                newData[i][j] = data[i][j] - matrix.getData()[i][j];
             }
-            return new Matrix(newData);
         }
+        return new Matrix(newData);
     }
 
     public Matrix multi(double n) {
@@ -55,6 +50,7 @@ public class Matrix {
     }
 
     public Matrix multi(Matrix matrix) {
+        if (cols != matrix.getRows()) throw new IllegalArgumentException("Matrices cannot be multiplied");
         double[][] newData = new double[rows][matrix.getCols()];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < matrix.getCols(); j++) {

@@ -1,0 +1,9 @@
+.status__panel {
+    -fx-background-color: #0d1017;
+    -fx-border-style: solid none none none;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b4048;
+}
+.status__panel__text {
+    -fx-text-fill: #f1f6fc;
+}
