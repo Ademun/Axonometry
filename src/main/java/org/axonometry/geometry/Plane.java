@@ -72,4 +72,8 @@ public class Plane implements GeometricalObject {
     public Vertex3D[] getVertices() {
         return vertices;
     }
+
+    public Vector3D getNormal() {
+        return normal;
+    }
 }

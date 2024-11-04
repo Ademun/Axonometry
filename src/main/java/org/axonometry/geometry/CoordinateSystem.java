@@ -33,15 +33,16 @@ public class CoordinateSystem implements GeometricalObject {
     }
 
     public void draw(GraphicsContext gc) {
+        Color[] axesColors = new Color[]{Color.RED.desaturate(), Color.BLUE.desaturate(), Color.GREEN.desaturate()};
         Rectangle2D bounds = Screen.getPrimary().getBounds();
-        gc.setStroke(Color.GRAY);
         IntStream.range(0, vertices.length / 2).forEach(i -> {
             vertices[i].draw(gc);
+            gc.setStroke(axesColors[i]);
             gc.strokeLine(
-                    -1 * vertices[i].getCoordinates().getX() + bounds.getMaxX() / 2,
-                    -1 * vertices[i].getCoordinates().getZ() + bounds.getMaxY() / 2,
-                    -1 * vertices[vertices.length / 2 + i].getCoordinates().getX() + bounds.getMaxX() / 2,
-                    -1 * vertices[vertices.length / 2 + i].getCoordinates().getZ() + bounds.getMaxY() / 2
+                    -1 * vertices[i].getCoordinates().getX() * 10 + bounds.getMaxX() / 2,
+                    -1 * vertices[i].getCoordinates().getZ() * 10 + bounds.getMaxY() / 2,
+                    -1 * vertices[vertices.length / 2 + i].getCoordinates().getX() * 10 + bounds.getMaxX() / 2,
+                    -1 * vertices[vertices.length / 2 + i].getCoordinates().getZ() * 10 + bounds.getMaxY() / 2
             );
         });
     }

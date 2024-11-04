@@ -29,8 +29,7 @@ public class Canvas3DController {
     private double dZ;
     private double mousePosX;
     private double mousePosY;
-    private double xRotation;
-    private double yRotation;
+    private double xyRotation;
     private double zRotation;
 
     @FXML
@@ -49,9 +48,8 @@ public class Canvas3DController {
 
     public void initialize() {
         scale = 1;
-        xRotation = -27;
-        yRotation = 25;
-        zRotation = 40;
+        xyRotation = -25;
+        zRotation = 500;
         transformCanvas();
         setListeners();
         setObjectsList(canvasPane.getCanvas().getObjects());
@@ -71,16 +69,18 @@ public class Canvas3DController {
                     double dx = (mousePosX - event.getSceneX());
                     double dy = (mousePosY - event.getSceneY());
                     if (event.isPrimaryButtonDown()) {
-                        xRotation += (400 * dx / bounds.getMaxY());
-                        yRotation -= (400 * dy / bounds.getMaxX());
+                        zRotation += (400 * dx / bounds.getMaxY());
+                        xyRotation -= (400 * dy / bounds.getMaxX());
                         transformCanvas();
                     }
                     mousePosX = event.getSceneX();
                     mousePosY = event.getSceneY();
+                    System.out.println(zRotation);
+                    System.out.println(xyRotation);
                 });
                 canvasPane.getScene().setOnScroll(event -> {
                     scale += event.getDeltaY() * 0.025;
-                    scale = Math.max(1, Math.min(50, scale));
+                    scale = Math.max(0.5, Math.min(50, scale));
                     transformCanvas();
                 });
                 canvasPane.getScene().setOnKeyPressed(event -> {
@@ -116,9 +116,9 @@ public class Canvas3DController {
     private void transformCanvas() {
         canvasPane.getCanvas().transform(
                 dX, 0, dZ,
-                xRotation * Math.PI / 180,
-                yRotation * Math.PI / 180,
-                zRotation * Math.PI / 180,
+                xyRotation * Math.PI / 180,
+                -1 * xyRotation * Math.PI / 180,
+                -1 * zRotation * Math.PI / 180,
                 scale
         );
     }
