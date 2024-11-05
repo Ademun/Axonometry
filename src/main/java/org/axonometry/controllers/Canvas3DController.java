@@ -36,7 +36,7 @@ public class Canvas3DController {
         setListeners();
         selectedObjects = new HashSet<>();
         pressedKeys = new HashSet<>();
-        setObjectsList(canvasPane.getCanvas().getObjects());
+        setObjectsCount();
     }
 
     private void setListeners() {
@@ -82,9 +82,7 @@ public class Canvas3DController {
                     pressedKeys.add(event.getCode());
                     handleKeyPress();
                 });
-                canvasPane.getScene().setOnKeyReleased(event -> {
-                    pressedKeys.remove(event.getCode());
-                });
+                canvasPane.getScene().setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
             }
         });
         vertexField.setOnKeyPressed(event -> {
@@ -104,17 +102,17 @@ public class Canvas3DController {
     private void createVertex() {
         canvasPane.getCanvas().addVertex(Vertex3D.fromString(vertexField.getText()));
         transformCanvas();
-        setObjectsList(canvasPane.getCanvas().getObjects());
+        setObjectsCount();
     }
 
     private void createPlane() {
+        if (selectedObjects.size() != 3) return;
         List<Vertex3D> selectedVertices = selectedObjects.stream()
                 .filter(object -> object instanceof Vertex3D)
                 .map(vertex -> (Vertex3D) vertex).toList();
-        selectedVertices.forEach(vertex3D -> System.out.println(vertex3D.toString()));
         canvasPane.getCanvas().addPlane(new ArrayList<>(selectedVertices));
         transformCanvas();
-        setObjectsList(canvasPane.getCanvas().getObjects());
+        setObjectsCount();
     }
 
     private void transformCanvas() {
@@ -129,11 +127,11 @@ public class Canvas3DController {
 
     private void deleteObjects() {
         canvasPane.getCanvas().removeObjects(selectedObjects);
-        setObjectsList(canvasPane.getCanvas().getObjects());
+        setObjectsCount();
     }
 
 
-    private void setObjectsList(ArrayList<GeometricalObject> list) {
+    private void setObjectsCount() {
         objectCount.setText("Объекты: " + (canvasPane.getCanvas().getObjects().size() - 1));
     }
 }

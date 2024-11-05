@@ -2,7 +2,6 @@ package org.axonometry;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -66,11 +65,15 @@ public class Canvas3D extends Canvas {
         transformedObjects.add(plane);
     }
     public void removeObjects(HashSet<GeometricalObject> selectedObjects) {
-        for (int i = selectedObjects.size() - 1; i >= 0; i--) {
-            int objectId = objects.indexOf(selectedObjects.toArray()[i]);
-            objects.remove(objectId);
-            transformedObjects.remove(objectId);
+        ArrayList<Integer> indices = new ArrayList<>();
+        for (GeometricalObject geometricalObject: selectedObjects) {
+            int objectId = objects.indexOf(geometricalObject);
+            indices.add(0, objectId);
         }
+        indices.forEach(id -> {
+            objects.remove((int) id);
+            transformedObjects.remove((int) id);
+        });
     }
     public GeometricalObject getClickedObject(double x, double y, boolean resetSelection) {
         if (resetSelection) {
