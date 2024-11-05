@@ -18,9 +18,6 @@
                         <Insets left="25.0" right="25.0" top="15.0"/>
                     </padding>
                     <TextField fx:id="vertexField" promptText="A (x, y, z)"/>
-                    <ListView fx:id="objectsList" prefHeight="200.0" prefWidth="200.0"/>
-                    <Button onAction="#deleteObjects" text="Delete vertices"/>
-                    <Button onAction="#createPlane" text="Create plane"/>
                 </VBox>
             </Tab>
         </TabPane>
@@ -39,8 +36,8 @@
         </MenuBar>
     </top>
     <bottom>
-        <HBox prefHeight="30.0" prefWidth="800.0" BorderPane.alignment="CENTER" styleClass="status__panel">
-            <Label styleClass="status__panel__text" fx:id="objectCount">
+        <HBox prefHeight="30.0" prefWidth="800.0" BorderPane.alignment="CENTER" styleClass="status__panel" alignment="CENTER_LEFT">
+            <Label fx:id="objectCount" styleClass="status__panel__text">
                 <padding>
                     <Insets>
                         <left>15</left>
@@ -49,7 +46,7 @@
                 </padding>
                 Объекты:
             </Label>
-            <Label styleClass="status__panel__text" fx:id="rotation">X: Y: Z:</Label>
+            <Label fx:id="rotation" styleClass="status__panel__text">X: Y: Z:</Label>
         </HBox>
     </bottom>
 </BorderPane>

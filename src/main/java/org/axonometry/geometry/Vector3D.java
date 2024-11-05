@@ -67,17 +67,8 @@ public class Vector3D extends Matrix {
     public static boolean areCollinear(Vector3D a, Vector3D b) {
         return vectorProduct(a, b).mag() == 0;
     }
-    public static boolean areCoplanar(Vector3D ...vertices) {
-        for (int i = 0; i < vertices.length; i++) {
-            for (int j = 0; j < vertices.length; j++) {
-                if (j == i) continue;
-                for (int k = 0; k < vertices.length; k++) {
-                    if (k == i || k == j) continue;
-                    if (mixedProduct(vertices[i], vertices[j], vertices[k]) != 0) return false;
-                }
-            }
-        }
-        return true;
+    public static boolean areCoplanar(Vector3D a, Vector3D b, Vector3D c) {
+        return mixedProduct(a, b, c) == 0;
     }
     public static boolean areOrthogonal(Vector3D ...vertices) {
         for (int i = 0; i < vertices.length; i++) {

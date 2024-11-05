@@ -15,10 +15,11 @@ public class Plane implements GeometricalObject {
     private final Color color;
 
     public Plane(Vertex3D[] vertices, Color color) {
+        if (vertices.length != 3) throw new IllegalArgumentException("Plane should consist of only 3 vertices");
         Vector3D[] vectors = new Vector3D[vertices.length - 1];
         IntStream.range(1, vertices.length)
                 .forEach(i -> vectors[i - 1] = new Vector3D(vertices[0], vertices[i]));
-        if (!Vector3D.areCoplanar(vectors)) throw new IllegalArgumentException("Vertices aren't coplanar");
+        Arrays.stream(vertices).forEach(vertex3D -> System.out.println(vertex3D.toString()));
         this.vertices = vertices;
         this.normal = Vector3D.vectorProduct(vectors[0], vectors[1]).ort();
         this.color = color;
@@ -42,7 +43,7 @@ public class Plane implements GeometricalObject {
         gc.setLineDashes(10);
         gc.setStroke(Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.9));
         gc.strokePolygon(xPoints, yPoints, vertices.length);
-            gc.setLineDashes(0);
+        gc.setLineDashes(0);
         gc.setFill(color);
         gc.fillPolygon(xPoints, yPoints, vertices.length);
     }

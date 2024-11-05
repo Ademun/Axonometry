@@ -38,7 +38,7 @@ public class CoordinateSystem implements GeometricalObject {
     public void draw(GraphicsContext gc) {
         Color[] axesColors = new Color[]{Color.RED.desaturate(), Color.BLUE.desaturate(), Color.GREEN.desaturate()};
         IntStream.range(0, vertices.length / 2).forEach(i -> {
-            Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(0.5, axesColors[i]), new Stop(1, Color.BLACK)};
+            Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(0.2, axesColors[i]), new Stop(0.8, axesColors[i]), new Stop(1, Color.BLACK)};
             LinearGradient axisGradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
             gc.setStroke(axisGradient);
             gc.strokeLine(
