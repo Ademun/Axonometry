@@ -16,12 +16,12 @@ public class CoordinateSystem implements GeometricalObject {
 
     public CoordinateSystem() {
         this.vertices = new Vertex3D[]{
-                new Vertex3D("x", new Vector3D(new double[][]{{3000}, {0}, {0}})),
-                new Vertex3D("y", new Vector3D(new double[][]{{0}, {3000}, {0}})),
-                new Vertex3D("z", new Vector3D(new double[][]{{0}, {0}, {3000}})),
-                new Vertex3D("-x", new Vector3D(new double[][]{{-3000}, {0}, {0}})),
-                new Vertex3D("-y", new Vector3D(new double[][]{{0}, {-3000}, {0}})),
-                new Vertex3D("-z", new Vector3D(new double[][]{{0}, {0}, {-3000}}))};
+                new Vertex3D("x", new Vector3D(new double[][]{{1000}, {0}, {0}})),
+                new Vertex3D("y", new Vector3D(new double[][]{{0}, {1000}, {0}})),
+                new Vertex3D("z", new Vector3D(new double[][]{{0}, {0}, {1000}})),
+                new Vertex3D("-x", new Vector3D(new double[][]{{-1000}, {0}, {0}})),
+                new Vertex3D("-y", new Vector3D(new double[][]{{0}, {-1000}, {0}})),
+                new Vertex3D("-z", new Vector3D(new double[][]{{0}, {0}, {-1000}}))};
     }
 
     public CoordinateSystem(Vertex3D[] vertices) {
@@ -39,7 +39,7 @@ public class CoordinateSystem implements GeometricalObject {
         Color[] axesColors = new Color[]{Color.RED.desaturate(), Color.BLUE.desaturate(), Color.GREEN.desaturate()};
         IntStream.range(0, vertices.length / 2).forEach(i -> {
             Stop[] stops = new Stop[]{new Stop(0, Color.BLACK), new Stop(0.2, axesColors[i]), new Stop(0.8, axesColors[i]), new Stop(1, Color.BLACK)};
-            LinearGradient axisGradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+            LinearGradient axisGradient = new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE, stops);
             gc.setStroke(axisGradient);
             gc.strokeLine(
                     transformForDrawing(vertices[i].getCoordinates()).getX(),

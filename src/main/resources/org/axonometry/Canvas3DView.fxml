@@ -7,23 +7,8 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400"
             prefWidth="800" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.axonometry.controllers.Canvas3DController">
-    <center>
-        <CanvasPane focusTraversable="true" BorderPane.alignment="CENTER" fx:id="canvasPane"/>
-    </center>
-    <left>
-        <TabPane focusTraversable="false">
-            <Tab closable="false" text="Vertices">
-                <VBox prefHeight="344.0" prefWidth="175.0" BorderPane.alignment="CENTER">
-                    <padding>
-                        <Insets left="25.0" right="25.0" top="15.0"/>
-                    </padding>
-                    <TextField fx:id="vertexField" promptText="A (x, y, z)"/>
-                </VBox>
-            </Tab>
-        </TabPane>
-    </left>
     <top>
-        <MenuBar BorderPane.alignment="CENTER">
+        <MenuBar BorderPane.alignment="CENTER" styleClass="menu__bar">
             <Menu mnemonicParsing="false" text="File">
                 <MenuItem mnemonicParsing="false" text="Close"/>
             </Menu>
@@ -35,6 +20,21 @@
             </Menu>
         </MenuBar>
     </top>
+    <center>
+        <CanvasPane focusTraversable="true" BorderPane.alignment="CENTER" fx:id="canvasPane"/>
+    </center>
+    <left>
+        <TabPane fx:id="canvasTabs" focusTraversable="false" styleClass="tab__panel">
+            <Tab closable="false" text="Создать" styleClass="tab">
+                <VBox prefHeight="344.0" prefWidth="175.0" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets left="25.0" right="25.0" top="15.0"/>
+                    </padding>
+                    <TextField fx:id="vertexField" styleClass="text__field" promptText="A (x, y, z)"/>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </left>
     <bottom>
         <HBox prefHeight="30.0" prefWidth="800.0" BorderPane.alignment="CENTER" styleClass="status__panel" alignment="CENTER_LEFT">
             <Label fx:id="objectCount" styleClass="status__panel__text">

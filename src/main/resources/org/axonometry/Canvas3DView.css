@@ -1,9 +1,40 @@
-.status__panel {
+* {
+    -fx-text-fill: #f1f6fc;
+}
+.menu__bar {
+   -fx-background-color: #0d1017;
+   -fx-border-style: hidden hidden solid hidden;
+   -fx-border-width: 2px;
+   -fx-border-color: #3b4048;
+}
+.tab__panel {
     -fx-background-color: #0d1017;
-    -fx-border-style: solid none none none;
+    -fx-border-style: hidden solid hidden hidden;
     -fx-border-width: 2px;
     -fx-border-color: #3b4048;
-}
-.status__panel__text {
+    -fx-text-base-color: #f1f6fc;
     -fx-text-fill: #f1f6fc;
+    -fx-text-background-color: #f1f6fc;
+}
+.tab {
+    -fx-background-color: #0d1017;
+    -fx-border-style: hidden hidden solid hidden;
+    -fx-border-width: 2px;
+    -fx-border-color: #a8675a;
+    -fx-text-base-color: #f1f6fc;
+    -fx-text-fill: #f1f6fc;
+    -fx-text-background-color: #f1f6fc;
+}
+.text__field {
+    -fx-padding: 4px 8px;
+    -fx-background-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-border-color: #3b4048;
+}
+.status__panel {
+    -fx-background-color: #0d1017;
+    -fx-border-style: solid hidden hidden hidden;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b4048;
 }

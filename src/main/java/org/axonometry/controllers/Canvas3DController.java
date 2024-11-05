@@ -3,6 +3,7 @@ package org.axonometry.controllers;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Screen;
@@ -17,9 +18,11 @@ import java.util.List;
 public class Canvas3DController {
     @FXML
     public CanvasPane canvasPane;
+    public TabPane canvasTabs;
     public TextField vertexField;
     public Label objectCount;
     public Label rotation;
+
     private HashSet<GeometricalObject> selectedObjects;
     private HashSet<KeyCode> pressedKeys;
     private double scale;
