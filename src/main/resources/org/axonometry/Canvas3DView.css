@@ -16,14 +16,19 @@
     -fx-text-fill: #f1f6fc;
     -fx-text-background-color: #f1f6fc;
 }
-.tab {
+.tab__panel .tab {
     -fx-background-color: #0d1017;
-    -fx-border-style: hidden hidden solid hidden;
-    -fx-border-width: 2px;
-    -fx-border-color: #a8675a;
     -fx-text-base-color: #f1f6fc;
     -fx-text-fill: #f1f6fc;
     -fx-text-background-color: #f1f6fc;
+}
+.tab__panel .tab .label {
+    -fx-font-size: 84;
+}
+.tab__panel .tab:selected {
+    -fx-border-style: hidden hidden solid hidden;
+    -fx-border-width: 2px;
+    -fx-border-color: #a8675a;
 }
 .text__field {
     -fx-padding: 4px 8px;

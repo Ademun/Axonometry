@@ -3,11 +3,14 @@ package org.axonometry.controllers;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Screen;
 import org.axonometry.CanvasPane;
+import org.axonometry.ObjectTab;
+import org.axonometry.Vertex3DTab;
 import org.axonometry.geometry.GeometricalObject;
 import org.axonometry.geometry.Vertex3D;
 
@@ -45,48 +48,50 @@ public class Canvas3DController {
     private void setListeners() {
         Rectangle2D bounds = Screen.getPrimary().getBounds();
         canvasPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                canvasPane.getScene().setOnMousePressed(event -> {
-                    mousePosX = event.getSceneX();
-                    mousePosY = event.getSceneY();
-                });
-                canvasPane.getScene().setOnMouseDragged(event -> {
-                    double dx = (mousePosX - event.getSceneX());
-                    double dy = (mousePosY - event.getSceneY());
-                    if (event.isPrimaryButtonDown()) {
-                        zRotation -= (200 * dx / bounds.getMaxY());
-                        xyRotation += (200 * dy / bounds.getMaxX());
-                        transformCanvas();
-                    }
-                    mousePosX = event.getSceneX();
-                    mousePosY = event.getSceneY();
-                });
-                canvasPane.getScene().setOnScroll(event -> {
-                    scale += event.getDeltaY() * 0.025;
-                    scale = Math.max(0.5, Math.min(50, scale));
-                    transformCanvas();
-                });
-                canvasPane.getScene().setOnMouseClicked(event -> {
-                    boolean containsShift = pressedKeys.contains(KeyCode.SHIFT);
-                    canvasPane.requestFocus();
-                    GeometricalObject selectedObject = canvasPane
-                            .getCanvas()
-                            .getClickedObject(event.getX() - 175.2, event.getY() - 25.6, !containsShift);
-                    if (selectedObject != null) {
-                        if (containsShift) {
-                            selectedObjects.add(selectedObject);
-                        } else {
-                            selectedObjects.clear();
-                            selectedObjects.add(selectedObject);
-                        }
-                    }
-                });
-                canvasPane.getScene().setOnKeyPressed(event -> {
-                    pressedKeys.add(event.getCode());
-                    handleKeyPress();
-                });
-                canvasPane.getScene().setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
+            if (newValue == null) {
+                return;
             }
+            canvasPane.getScene().setOnMousePressed(event -> {
+                mousePosX = event.getSceneX();
+                mousePosY = event.getSceneY();
+            });
+            canvasPane.getScene().setOnMouseDragged(event -> {
+                double dx = (mousePosX - event.getSceneX());
+                double dy = (mousePosY - event.getSceneY());
+                if (event.isPrimaryButtonDown()) {
+                    zRotation -= (200 * dx / bounds.getMaxY());
+                    xyRotation -= (200 * dy / bounds.getMaxX());
+                    transformCanvas();
+                }
+                mousePosX = event.getSceneX();
+                mousePosY = event.getSceneY();
+            });
+            canvasPane.getScene().setOnScroll(event -> {
+                scale += event.getDeltaY() * 0.025;
+                scale = Math.max(0.5, Math.min(50, scale));
+                transformCanvas();
+            });
+            canvasPane.getScene().setOnMouseClicked(event -> {
+                boolean isShiftPressed = pressedKeys.contains(KeyCode.SHIFT);
+                canvasPane.requestFocus();
+                GeometricalObject selectedObject = canvasPane.getCanvas().getClickedObject(event.getX() - 175.2, event.getY() - 25.6, !isShiftPressed);
+                if (canvasTabs.getTabs().size() > 1) {
+                    removeObjectTab();
+                }
+                if (selectedObject == null) {
+                    return;
+                }
+                if (!isShiftPressed) {
+                    selectedObjects.clear();
+                    createObjectTab(selectedObject);
+                }
+                selectedObjects.add(selectedObject);
+            });
+            canvasPane.getScene().setOnKeyPressed(event -> {
+                pressedKeys.add(event.getCode());
+                handleKeyPress();
+            });
+            canvasPane.getScene().setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
         });
         vertexField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) createVertex();
@@ -97,13 +102,15 @@ public class Canvas3DController {
         pressedKeys.forEach(keyCode -> {
             switch (keyCode) {
                 case DELETE -> deleteObjects();
-                case ENTER -> createPlane();
+                case P -> createPlane();
             }
         });
     }
 
     private void createVertex() {
-        canvasPane.getCanvas().addVertex(Vertex3D.fromString(vertexField.getText()));
+        Vertex3D vertex = Vertex3D.fromString(vertexField.getText());
+        vertexField.clear();
+        canvasPane.getCanvas().addVertex(vertex);
         transformCanvas();
         setObjectsCount();
     }
@@ -119,7 +126,7 @@ public class Canvas3DController {
     }
 
     private void transformCanvas() {
-        rotation.setText("X: " + Math.round(xyRotation) + " Y: " + Math.round(xyRotation) + " Z: " + Math.round(zRotation));
+        rotation.setText(String.format("X: %d° Y: %d° Z: %d°", Math.round(xyRotation), Math.round(xyRotation), Math.round(zRotation)));
         canvasPane.getCanvas().transform(
                 -1 * xyRotation * Math.PI / 180,
                 xyRotation * Math.PI / 180,
@@ -130,12 +137,32 @@ public class Canvas3DController {
 
     private void deleteObjects() {
         canvasPane.getCanvas().removeObjects(selectedObjects);
+        if (canvasTabs.getTabs().size() > 1) {
+            removeObjectTab();
+        }
         setObjectsCount();
     }
 
 
     private void setObjectsCount() {
         objectCount.setText("Объекты: " + (canvasPane.getCanvas().getObjects().size() - 1));
+    }
+
+    private void createObjectTab(GeometricalObject object) {
+        ObjectTab objectTab = switch (object) {
+            case Vertex3D vertex -> new Vertex3DTab(vertex);
+            default -> null;
+        };
+        if (objectTab == null) {
+            return;
+        }
+        canvasTabs.getTabs().add(objectTab);
+        canvasTabs.getSelectionModel().select(objectTab);
+    }
+
+    private void removeObjectTab() {
+        Tab objectTab = canvasTabs.getTabs().remove(1);
+        canvasTabs.getTabs().remove(objectTab);
     }
 }
 

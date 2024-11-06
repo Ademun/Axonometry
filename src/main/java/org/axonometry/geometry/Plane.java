@@ -19,7 +19,6 @@ public class Plane implements GeometricalObject {
         Vector3D[] vectors = new Vector3D[vertices.length - 1];
         IntStream.range(1, vertices.length)
                 .forEach(i -> vectors[i - 1] = new Vector3D(vertices[0], vertices[i]));
-        Arrays.stream(vertices).forEach(vertex3D -> System.out.println(vertex3D.toString()));
         this.vertices = vertices;
         this.normal = Vector3D.vectorProduct(vectors[0], vectors[1]).ort();
         this.color = color;
