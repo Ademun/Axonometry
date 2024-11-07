@@ -68,7 +68,7 @@ public class Canvas3D extends Canvas {
         ArrayList<Integer> indices = new ArrayList<>();
         for (GeometricalObject geometricalObject: selectedObjects) {
             int objectId = objects.indexOf(geometricalObject);
-            indices.add(0, objectId);
+            indices.addFirst(objectId);
         }
         indices.forEach(id -> {
             objects.remove((int) id);
@@ -85,7 +85,7 @@ public class Canvas3D extends Canvas {
         if (clickedObjectsSorted.isEmpty()) {
             return null;
         }
-        return clickedObjectsSorted.get(0);
+        return clickedObjectsSorted.getFirst();
     }
 
     private List<GeometricalObject> getClickedObjectsSorted(double x, double y) {
@@ -99,6 +99,8 @@ public class Canvas3D extends Canvas {
                                 [0].getCoordinates().getZ()
                 ))
                 .toList();
+    }
+    public void highlightObjects(ArrayList<GeometricalObject> objects) {
     }
 
     public ArrayList<GeometricalObject> getObjects() {

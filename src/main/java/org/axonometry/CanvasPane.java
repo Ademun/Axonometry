@@ -5,7 +5,7 @@ import javafx.scene.layout.Region;
 import java.util.function.Consumer;
 
 public class CanvasPane extends Region {
-    private final Canvas3D canvas ;
+    private Canvas3D canvas;
     private Consumer<Canvas3D> repaint ;
     public CanvasPane() {
         this.canvas = new Canvas3D();
@@ -23,6 +23,13 @@ public class CanvasPane extends Region {
 
     public Canvas3D getCanvas() {
         return canvas ;
+    }
+
+    public void setCanvas(Canvas3D canvas) {
+        getChildren().remove(this.canvas);
+        this.canvas = canvas;
+        getChildren().add(canvas);
+        layoutChildren();
     }
 
     @Override

@@ -59,8 +59,11 @@ public class CoordinateSystem implements GeometricalObject {
         });
     }
 
+    @Override
     public String toString() {
-        return "XYZ";
+        return "CoordinateSystem{" +
+                "vertices=" + Arrays.toString(vertices) +
+                '}';
     }
 
     public Vertex3D[] getVertices() {

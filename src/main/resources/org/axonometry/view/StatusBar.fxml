@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      prefHeight="30.0"
+      prefWidth="800.0"
+      alignment="CENTER_LEFT"
+      styleClass="status__panel">
+    <Label fx:id="objectCount" styleClass="status__panel__text">
+        <padding>
+            <Insets>
+                <left>15</left>
+                <right>25</right>
+            </Insets>
+        </padding>
+        Объекты:
+    </Label>
+    <Label fx:id="rotation" styleClass="status__panel__text">X: Y: Z:</Label>
+</HBox>

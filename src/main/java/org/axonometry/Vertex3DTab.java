@@ -1,5 +1,6 @@
 package org.axonometry;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import org.axonometry.geometry.Vector3D;
 import org.axonometry.geometry.Vertex3D;
@@ -25,6 +26,7 @@ public class Vertex3DTab extends ObjectTab{
                 df.format(coordinates.getZ()))
         );
         coordinatesText.getStyleClass().add("label");
+        Button deleteButton = new Button();
         this.setContent(coordinatesText);
     }
 }

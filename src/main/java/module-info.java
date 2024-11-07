@@ -9,4 +9,6 @@ module org.acsonometry {
     opens org.axonometry.geometry to javafx.fxml;
     exports org.axonometry.controllers;
     opens org.axonometry.controllers to javafx.fxml;
+    exports org.axonometry.models;
+    opens org.axonometry.models to javafx.fxml;
 }

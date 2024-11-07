@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<TabPane xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:id="canvasTabs"
+         focusTraversable="false"
+         styleClass="tab__panel">
+    <Tab closable="false" text="Создать" styleClass="tab">
+        <VBox prefHeight="344.0" prefWidth="175.0">
+            <padding>
+                <Insets left="25.0" right="25.0" top="15.0"/>
+            </padding>
+            <TextField fx:id="vertexCreationField" styleClass="text__field" promptText="A (x, y, z)"/>
+        </VBox>
+    </Tab>
+</TabPane>
