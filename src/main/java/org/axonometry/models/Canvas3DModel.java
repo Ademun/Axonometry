@@ -19,7 +19,7 @@ public class Canvas3DModel {
 
     public Canvas3DModel() {
         this.canvas = new Canvas3D();
-        this.objectCount = new SimpleIntegerProperty(canvas.getObjects().size());
+        this.objectCount = new SimpleIntegerProperty(canvas.getObjects().size() - 1);
         this.scale = new SimpleDoubleProperty(1);
         this.xyRotation = new SimpleDoubleProperty(10);
         this.zRotation = new SimpleDoubleProperty(45);

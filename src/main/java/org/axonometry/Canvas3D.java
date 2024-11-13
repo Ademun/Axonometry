@@ -60,9 +60,15 @@ public class Canvas3D extends Canvas {
 
     public void addPlane(ArrayList<Vertex3D> vertices) {
         Random random = new Random();
-        Plane plane = new Plane(vertices.toArray(Vertex3D[]::new), Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.25));
-        objects.add(plane);
-        transformedObjects.add(plane);
+        Polygon polygon = new Polygon(vertices.toArray(Vertex3D[]::new), Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.25));
+        objects.add(polygon);
+        transformedObjects.add(polygon);
+    }
+
+    public void removeObject(GeometricalObject object) {
+        int objectId = objects.indexOf(object);
+        objects.remove(objectId);
+        transformedObjects.remove(objectId);
     }
     public void removeObjects(HashSet<GeometricalObject> selectedObjects) {
         ArrayList<Integer> indices = new ArrayList<>();
@@ -70,7 +76,7 @@ public class Canvas3D extends Canvas {
             int objectId = objects.indexOf(geometricalObject);
             indices.addFirst(objectId);
         }
-        indices.forEach(id -> {
+        indices.stream().sorted(Comparator.reverseOrder()).forEach(id -> {
             objects.remove((int) id);
             transformedObjects.remove((int) id);
         });
@@ -81,26 +87,43 @@ public class Canvas3D extends Canvas {
                     .filter(object -> object instanceof Clickable)
                     .forEach(object -> ((Clickable) object).setIsSelected(false));
         }
-        List<GeometricalObject> clickedObjectsSorted = getClickedObjectsSorted(x, y);
+        List<GeometricalObject> clickedObjectsSorted = sortClickedObjects(x, y);
         if (clickedObjectsSorted.isEmpty()) {
             return null;
         }
         return clickedObjectsSorted.getFirst();
     }
 
-    private List<GeometricalObject> getClickedObjectsSorted(double x, double y) {
+    private List<GeometricalObject> sortClickedObjects(double x, double y) {
         return objects.stream()
-                .filter(object -> object instanceof Clickable && ((Clickable) transformedObjects.get(objects.indexOf(object))).isClicked(x, y))
-                .peek(object -> ((Clickable) transformedObjects.get(objects.indexOf(object))).setIsSelected(((Clickable) transformedObjects.get(objects.indexOf(object))).isClicked(x, y)))
+                .filter(object -> {
+                    if (object instanceof Clickable) {
+                        int objectId = objects.indexOf(object);
+                         return ((Clickable) transformedObjects.get(objectId)).isClicked(x, y);
+                    }
+                    return false;
+                })
                 .sorted(Comparator.comparing(object ->
                         Arrays.stream(object.getVertices())
-                                .sorted(Comparator.comparing(vertex -> vertex.getCoordinates().getZ()))
+                                .sorted(Comparator.comparing(vertex -> vertex.getCoordinates().z))
                                 .toArray(Vertex3D[]::new)
-                                [0].getCoordinates().getZ()
+                                [0].getCoordinates().z
                 ))
                 .toList();
     }
-    public void highlightObjects(ArrayList<GeometricalObject> objects) {
+
+    public void highlightObjects(ArrayList<GeometricalObject> selectedObjects) {
+        System.out.println(selectedObjects);
+        selectedObjects.forEach(object -> {
+            int objectId = objects.indexOf(object);
+            if (objectId == -1) {
+                return;
+            }
+            GeometricalObject transformedObject = transformedObjects.get(objectId);
+            if (transformedObject instanceof Clickable) {
+                ((Clickable) transformedObject).setIsSelected(true);
+            }
+        });
     }
 
     public ArrayList<GeometricalObject> getObjects() {

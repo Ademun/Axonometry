@@ -6,7 +6,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.axonometry.controllers.CanvasController;
+import org.axonometry.controllers.Canvas3DController;
 import org.axonometry.controllers.StatusBarController;
 import org.axonometry.controllers.TabsController;
 import org.axonometry.models.Canvas3DModel;
@@ -24,8 +24,8 @@ public class Application extends javafx.application.Application {
         HBox statusBar = loader.load();
 
         loader = new FXMLLoader(Application.class.getResource("view/Canvas3D.fxml"));
-        CanvasController canvasController = new CanvasController(canvas3DModel);
-        loader.setController(canvasController);
+        Canvas3DController canvas3DController = new Canvas3DController(canvas3DModel);
+        loader.setController(canvas3DController);
         CanvasPane canvasPane = loader.load();
 
         loader = new FXMLLoader(Application.class.getResource("view/Tabs.fxml"));

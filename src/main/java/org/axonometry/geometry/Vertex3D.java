@@ -2,6 +2,7 @@ package org.axonometry.geometry;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import org.axonometry.Location;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -9,22 +10,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.axonometry.geometry.CoordinateSystem.transformForDrawing;
-
 public class Vertex3D implements GeometricalObject, Clickable {
     private String name;
     private final Vector3D coordinates;
     private final double radius;
+    private final Location location;
     private boolean isSelected;
 
     public Vertex3D(String name, Vector3D coordinates, double radius) {
         this.name = name;
         this.coordinates = coordinates;
         this.radius = radius;
+        this.location = Location.OCTANT_1;
     }
     public Vertex3D(String name, Vector3D coordinates) {
         this.name = name;
         this.coordinates = coordinates;
         this.radius = 2;
+        this.location = Location.OCTANT_1;
     }
 
     public Vertex3D transform(double rx, double ry, double rz, double scale) {
@@ -37,12 +40,12 @@ public class Vertex3D implements GeometricalObject, Clickable {
         return new Vertex3D(name, transformed);
     }
     public Vertex3D rotate(Matrix rm) {
-        Vector3D rotated = new Vector3D(rm.multi(this.coordinates).getData());
+        Vector3D rotated = new Vector3D(rm.multi(coordinates).getData());
         return new Vertex3D(name, rotated);
     }
 
     public Vertex3D scale(double value) {
-        Vector3D scaled = new Vector3D(this.coordinates.multi(value).getData());
+        Vector3D scaled = new Vector3D(coordinates.multi(value).getData());
         return new Vertex3D(name, scaled);
     }
 
@@ -50,54 +53,34 @@ public class Vertex3D implements GeometricalObject, Clickable {
         if (isSelected) {
             gc.setFill(Color.rgb(255, 140, 0, 0.5));
             gc.fillOval(
-                    transformForDrawing(this.coordinates).getX() - radius * 2,
-                    transformForDrawing(this.coordinates).getZ() - radius * 2, radius * 4, radius * 4
+                    transformForDrawing(coordinates).x - radius * 2,
+                    transformForDrawing(coordinates).z - radius * 2, radius * 4, radius * 4
             );
             gc.setStroke(Color.ORANGE);
             gc.strokeOval(
-                    transformForDrawing(this.coordinates).getX() - radius * 2,
-                    transformForDrawing(this.coordinates).getZ() - radius * 2, radius * 4, radius * 4
+                    transformForDrawing(coordinates).x - radius * 2,
+                    transformForDrawing(coordinates).z - radius * 2, radius * 4, radius * 4
             );
         }
         gc.setFill(Color.WHITE);
         gc.fillOval(
-                transformForDrawing(this.coordinates).getX() - radius,
-                transformForDrawing(this.coordinates).getZ() - radius, radius * 2, radius * 2
+                transformForDrawing(coordinates).x - radius,
+                transformForDrawing(coordinates).z - radius, radius * 2, radius * 2
         );
         gc.fillText(
                 name,
-                transformForDrawing(this.coordinates).getX() - radius * 2,
-                transformForDrawing(this.coordinates).getZ() - radius * 4
+                transformForDrawing(coordinates).x - radius * 2,
+                transformForDrawing(coordinates).z - radius * 4
         );
-    }
-
-    public Vertex3D projectOn(Plane plane, String name) {
-        Vector3D normal = plane.getNormal();
-        Vertex3D planeVertex = plane.getVertices()[0];
-        double param = -1 * (
-                normal.getX() * coordinates.getX()
-                + normal.getY() * coordinates.getY()
-                + normal.getZ() * coordinates.getZ()
-                + -1 * (
-                        normal.getX() * planeVertex.getCoordinates().getX()
-                        + normal.getY() * planeVertex.getCoordinates().getY()
-                        + normal.getZ() * planeVertex.getCoordinates().getZ()
-                )
-        ) / (normal.getX() * normal.getX() + normal.getY() * normal.getY() + normal.getZ() * normal.getZ());
-        return new Vertex3D(name, new Vector3D(new double[][]{
-                {normal.getX() * param + coordinates.getX()},
-                {normal.getY() * param + coordinates.getY()},
-                {normal.getZ() * param + coordinates.getZ()}
-        }), 2);
     }
     public boolean isClicked(double x, double y) {
         int CLICK_AREA = 48;
-        return Math.pow(x - transformForDrawing(this.coordinates).getX() - radius, 2) + Math.pow(y - transformForDrawing(this.coordinates).getZ() - radius / 2, 2) <= CLICK_AREA;
+        return Math.pow(x - transformForDrawing(this.coordinates).x - radius, 2) + Math.pow(y - transformForDrawing(this.coordinates).z - radius / 2, 2) <= CLICK_AREA;
     }
 
     public String toString() {
         DecimalFormat df = new DecimalFormat("#.##");
-        return String.format("%s (%s, %s, %s)", name, df.format(coordinates.getX()), df.format(coordinates.getY()), df.format(coordinates.getZ()));
+        return String.format("%s (%s, %s, %s)", name, df.format(coordinates.x), df.format(coordinates.y), df.format(coordinates.z));
     }
 
     public static Vertex3D fromString(String str) {
