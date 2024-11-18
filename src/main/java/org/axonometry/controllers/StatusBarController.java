@@ -15,19 +15,27 @@ public class StatusBarController {
     }
 
     public void initialize() {
-        objectCount.setText(String.format("Объекты: %d", model.getObjectCount()));
+        updateObjectCountLabel();
+        updateRotationLabel();
+        setListeners();
+    }
+
+    private void updateRotationLabel() {
         rotation.setText(String.format(
                 "X: %d° Y: %d° Z: %d°",
                 (int) model.getXyRotation(),
                 (int) model.getXyRotation(),
                 (int) model.getZRotation())
         );
-        setListeners();
+    }
+
+    private void updateObjectCountLabel() {
+        objectCount.setText(String.format("Объекты: %d", model.getObjectCount()));
     }
 
     private void setListeners() {
-        model.objectCountProperty().addListener((property, oldValue, newValue) -> {
-            objectCount.setText(String.format("Объекты: %d", (int) newValue));
-        });
+        model.objectCountProperty().addListener(args -> updateObjectCountLabel());
+        model.xyRotationProperty().addListener(args -> updateRotationLabel());
+        model.zRotationProperty().addListener(args -> updateRotationLabel());
     }
 }

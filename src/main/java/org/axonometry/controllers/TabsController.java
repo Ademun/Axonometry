@@ -49,7 +49,7 @@ public class TabsController {
     private void setHandlers() {
         vertexCreationField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                createVertex(vertexCreationField.getText());
+                createVertexFromString(vertexCreationField.getText());
                 vertexCreationField.clear();
             }
         });
@@ -73,11 +73,11 @@ public class TabsController {
         canvasTabs.getSelectionModel().select(objectTab);
     }
 
-    private void createVertex(String vertexString) {
+    private void createVertexFromString(String vertexString) {
         Vertex3D vertex = Vertex3D.fromString(vertexString);
         model.getCanvas().addVertex(vertex);
+        model.setObjectCount(model.getObjectCount() + 1);
         model.getSelectedObjects().clear();
         model.getSelectedObjects().add(vertex);
-        model.setObjectCount(model.getObjectCount() + 1);
     }
 }

@@ -113,7 +113,6 @@ public class Canvas3D extends Canvas {
     }
 
     public void highlightObjects(ArrayList<GeometricalObject> selectedObjects) {
-        System.out.println(selectedObjects);
         selectedObjects.forEach(object -> {
             int objectId = objects.indexOf(object);
             if (objectId == -1) {

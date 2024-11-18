@@ -11,7 +11,7 @@
          focusTraversable="false"
          styleClass="tab__panel">
     <Tab closable="false" text="Создать" styleClass="tab">
-        <VBox prefHeight="344.0" prefWidth="175.0">
+        <VBox prefHeight="Infinity" prefWidth="250.0">
             <padding>
                 <Insets left="25.0" right="25.0" top="15.0"/>
             </padding>

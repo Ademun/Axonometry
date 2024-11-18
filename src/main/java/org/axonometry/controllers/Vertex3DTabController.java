@@ -16,7 +16,11 @@ public class Vertex3DTabController {
     @FXML
     Tab vertexTab;
     @FXML
+    Label titleLabel;
+    @FXML
     Label coordinatesLabel;
+    @FXML
+    Label locationLabel;
     @FXML
     Button deleteButton;
 
@@ -26,16 +30,17 @@ public class Vertex3DTabController {
     }
     public void initialize() {
         setHandlers();
-        vertexTab.setText(String.format("Точка %s", vertex.getName()));
+        titleLabel.setText("Информация о точке " + vertex.getName());
         DecimalFormat df = new DecimalFormat("##.##");
         Vector3D coordinates = vertex.getCoordinates();
         String coordinatesText = String.format(
-                "Координаты: X: %s Y: %s Z: %s",
+                "(%s, %s, %s)",
                 df.format(coordinates.x),
                 df.format(coordinates.y),
                 df.format(coordinates.z)
         );
         coordinatesLabel.setText(coordinatesText);
+        locationLabel.setText(vertex.getLocation().toString());
     }
 
     public void setHandlers() {

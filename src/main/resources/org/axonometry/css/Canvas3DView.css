@@ -1,17 +1,6 @@
 * {
     -fx-text-fill: #f1f6fc;
 }
-.button-delete {
-        -fx-padding: 6px 12px;
-
-        -fx-background-color: transparent;
-        -fx-border-width: 2px;
-        -fx-border-radius: 4px;
-        -fx-border-color: red;
-
-        -fx-text-fill: red;
-        -fx-font-weight: bold;
-}
 .menu__bar {
    -fx-background-color: #0d1017;
    -fx-border-style: hidden hidden solid hidden;

@@ -4,6 +4,7 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Screen;
 import org.axonometry.CanvasPane;
 import org.axonometry.geometry.GeometricalObject;
@@ -58,30 +59,36 @@ public class Canvas3DController {
                 model.setScale(newScale);
             });
             newValue.setOnMousePressed(event -> {
-                mousePosX = event.getSceneX();
-                mousePosY = event.getSceneY();
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    mousePosX = event.getSceneX();
+                    mousePosY = event.getSceneY();
+                }
             });
             newValue.setOnMouseDragged(event -> {
-                double dx = (mousePosX - event.getSceneX());
-                double dy = (mousePosY - event.getSceneY());
-                if (event.isPrimaryButtonDown()) {
-                    model.setZRotation(model.getZRotation() - (200 * dx / bounds.getMaxY()));
-                    model.setXyRotation(model.getXyRotation() - (200 * dy / bounds.getMaxX()));
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    double dx = (mousePosX - event.getSceneX());
+                    double dy = (mousePosY - event.getSceneY());
+                    if (event.isSecondaryButtonDown()) {
+                        model.setZRotation(model.getZRotation() - (200 * dx / bounds.getMaxY()));
+                        model.setXyRotation(model.getXyRotation() - (200 * dy / bounds.getMaxX()));
+                    }
+                    mousePosX = event.getSceneX();
+                    mousePosY = event.getSceneY();
                 }
-                mousePosX = event.getSceneX();
-                mousePosY = event.getSceneY();
             });
             newValue.setOnMouseClicked(event -> {
-                boolean isShiftPressed = pressedKeys.contains(KeyCode.SHIFT);
-                canvasPane.requestFocus();
-                GeometricalObject selectedObject = model.getCanvas().getClickedObject(event.getX() - 175.2, event.getY() - 25.6, !isShiftPressed);
-                if (!isShiftPressed) {
-                    model.getSelectedObjects().clear();
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    boolean isShiftPressed = pressedKeys.contains(KeyCode.SHIFT);
+                    canvasPane.requestFocus();
+                    GeometricalObject selectedObject = model.getCanvas().getClickedObject(event.getX() - 250, event.getY() - 25, !isShiftPressed);
+                    if (!isShiftPressed) {
+                        model.getSelectedObjects().clear();
+                    }
+                    if (selectedObject == null) {
+                        return;
+                    }
+                    model.getSelectedObjects().add(selectedObject);
                 }
-                if (selectedObject == null) {
-                    return;
-                }
-                model.getSelectedObjects().add(selectedObject);
             });
             newValue.setOnKeyPressed(event -> {
                 pressedKeys.add(event.getCode());

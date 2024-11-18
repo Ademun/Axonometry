@@ -1,12 +1,13 @@
-package org.axonometry;
+package org.axonometry.geometry;
 
 public enum Location {
-    X_AXIS("Ox"),
-    Y_AXIS("Oy"),
-    Z_AXIS("Oz"),
-    HORIZONTAL_PLANE("π1"),
-    FRONTAL_PLANE("π2"),
-    PROFILE_PLANE("π3"),
+    CENTER("Начало координат"),
+    X_AXIS("Ось x"),
+    Y_AXIS("Ось y"),
+    Z_AXIS("Ось z"),
+    HORIZONTAL_PLANE("XY"),
+    FRONTAL_PLANE("XZ"),
+    PROFILE_PLANE("YZ"),
     OCTANT_1("I Октант"),
     OCTANT_2("II Октант"),
     OCTANT_3("III Октант"),

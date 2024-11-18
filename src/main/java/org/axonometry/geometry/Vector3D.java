@@ -81,10 +81,6 @@ public class Vector3D extends Matrix {
     }
 
     public String toString() {
-        return "Vector3D{" +
-                "x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                '}';
+        return String.format("(%f, %f, %f)", x, y, z);
     }
 }
