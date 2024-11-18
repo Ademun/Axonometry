@@ -86,19 +86,19 @@ public class Matrix {
         double cosTheta = Math.cos(rad);
         double sinTheta = Math.sin(rad);
         return new Matrix(new double[][]{
-                {cosTheta + vec.getX() * vec.getX() * (1 - cosTheta),
-                        vec.getX() * vec.getY() * (1 - cosTheta) - vec.getZ() * sinTheta,
-                        vec.getX() * vec.getZ() * (1 - cosTheta) + vec.getY() * sinTheta
+                {cosTheta + vec.x * vec.x * (1 - cosTheta),
+                        vec.x * vec.y * (1 - cosTheta) - vec.z * sinTheta,
+                        vec.x * vec.z * (1 - cosTheta) + vec.y * sinTheta
                 },
                 {
-                        vec.getY() * vec.getX() * (1 - cosTheta) + vec.getZ() * sinTheta,
-                        cosTheta + vec.getY() * vec.getY() * (1 - cosTheta),
-                        vec.getY() * vec.getZ() * (1 - cosTheta) - vec.getX() * sinTheta
+                        vec.y * vec.x * (1 - cosTheta) + vec.z * sinTheta,
+                        cosTheta + vec.y * vec.y * (1 - cosTheta),
+                        vec.y * vec.z * (1 - cosTheta) - vec.x * sinTheta
                 },
                 {
-                        vec.getZ() * vec.getX() * (1 - cosTheta) - vec.getY() * sinTheta,
-                        vec.getZ() * vec.getY() * (1 - cosTheta) + vec.getX() * sinTheta,
-                        cosTheta + vec.getZ() * vec.getZ() * (1 - cosTheta)
+                        vec.z * vec.x * (1 - cosTheta) - vec.y * sinTheta,
+                        vec.z * vec.y * (1 - cosTheta) + vec.x * sinTheta,
+                        cosTheta + vec.z * vec.z * (1 - cosTheta)
                 }
         });
     }

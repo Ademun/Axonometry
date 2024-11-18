@@ -1,100 +1,100 @@
 package org.axonometry.controllers;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Screen;
 import org.axonometry.CanvasPane;
-import org.axonometry.ObjectTab;
-import org.axonometry.Vertex3DTab;
 import org.axonometry.geometry.GeometricalObject;
 import org.axonometry.geometry.Vertex3D;
+import org.axonometry.models.Canvas3DModel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 public class Canvas3DController {
-    @FXML
-    public CanvasPane canvasPane;
-    public TabPane canvasTabs;
-    public TextField vertexField;
-    public Label objectCount;
-    public Label rotation;
-
-    private HashSet<GeometricalObject> selectedObjects;
-    private HashSet<KeyCode> pressedKeys;
-    private double scale;
+    private final Canvas3DModel model;
     private double mousePosX;
     private double mousePosY;
-    private double xyRotation;
-    private double zRotation;
+    private final HashSet<KeyCode> pressedKeys;
+    private final double MOUSE_SCROLL_MULTIPLIER = 0.01;
+    @FXML
+    CanvasPane canvasPane;
+
+    public Canvas3DController(Canvas3DModel model) {
+        this.model = model;
+        this.pressedKeys = new HashSet<>();
+    }
 
     public void initialize() {
-        scale = 1;
-        xyRotation = 10;
-        zRotation = 45;
-        transformCanvas();
+        canvasPane.setCanvas(model.getCanvas());
         setListeners();
-        selectedObjects = new HashSet<>();
-        pressedKeys = new HashSet<>();
-        setObjectsCount();
+        setHandlers();
+        transformCanvas();
     }
 
     private void setListeners() {
+        model.xyRotationProperty().addListener(args -> transformCanvas());
+        model.zRotationProperty().addListener(args -> transformCanvas());
+        model.scaleProperty().addListener(args -> transformCanvas());
+        model.objectCountProperty().addListener(args -> transformCanvas());
+        model.getSelectedObjects().addListener((ListChangeListener<? super GeometricalObject>) observable -> {
+            var selectedObjectsList =  observable.getList();
+            model.getCanvas().highlightObjects(new ArrayList<>(selectedObjectsList));
+        });
+    }
+
+    private void setHandlers() {
         Rectangle2D bounds = Screen.getPrimary().getBounds();
-        canvasPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
+        model.getCanvas().sceneProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
-            canvasPane.getScene().setOnMousePressed(event -> {
-                mousePosX = event.getSceneX();
-                mousePosY = event.getSceneY();
+            newValue.setOnScroll(event -> {
+                double newScale = model.getScale() + event.getDeltaY() * MOUSE_SCROLL_MULTIPLIER;
+                newScale = Math.clamp(newScale, 0.2, 50);
+                model.setScale(newScale);
             });
-            canvasPane.getScene().setOnMouseDragged(event -> {
-                double dx = (mousePosX - event.getSceneX());
-                double dy = (mousePosY - event.getSceneY());
-                if (event.isPrimaryButtonDown()) {
-                    zRotation -= (200 * dx / bounds.getMaxY());
-                    xyRotation -= (200 * dy / bounds.getMaxX());
-                    transformCanvas();
+            newValue.setOnMousePressed(event -> {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    mousePosX = event.getSceneX();
+                    mousePosY = event.getSceneY();
                 }
-                mousePosX = event.getSceneX();
-                mousePosY = event.getSceneY();
             });
-            canvasPane.getScene().setOnScroll(event -> {
-                scale += event.getDeltaY() * 0.025;
-                scale = Math.max(0.5, Math.min(50, scale));
-                transformCanvas();
+            newValue.setOnMouseDragged(event -> {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    double dx = (mousePosX - event.getSceneX());
+                    double dy = (mousePosY - event.getSceneY());
+                    if (event.isSecondaryButtonDown()) {
+                        model.setZRotation(model.getZRotation() - (200 * dx / bounds.getMaxY()));
+                        model.setXyRotation(model.getXyRotation() - (200 * dy / bounds.getMaxX()));
+                    }
+                    mousePosX = event.getSceneX();
+                    mousePosY = event.getSceneY();
+                }
             });
-            canvasPane.getScene().setOnMouseClicked(event -> {
-                boolean isShiftPressed = pressedKeys.contains(KeyCode.SHIFT);
-                canvasPane.requestFocus();
-                GeometricalObject selectedObject = canvasPane.getCanvas().getClickedObject(event.getX() - 175.2, event.getY() - 25.6, !isShiftPressed);
-                if (canvasTabs.getTabs().size() > 1) {
-                    removeObjectTab();
+            newValue.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    boolean isShiftPressed = pressedKeys.contains(KeyCode.SHIFT);
+                    canvasPane.requestFocus();
+                    GeometricalObject selectedObject = model.getCanvas().getSelectedObject(event.getX() - 250, event.getY() - 25, !isShiftPressed);
+                    if (!isShiftPressed) {
+                        model.getSelectedObjects().clear();
+                    }
+                    if (selectedObject == null) {
+                        return;
+                    }
+                    model.getSelectedObjects().add(selectedObject);
                 }
-                if (selectedObject == null) {
-                    return;
-                }
-                if (!isShiftPressed) {
-                    selectedObjects.clear();
-                    createObjectTab(selectedObject);
-                }
-                selectedObjects.add(selectedObject);
             });
-            canvasPane.getScene().setOnKeyPressed(event -> {
+            newValue.setOnKeyPressed(event -> {
                 pressedKeys.add(event.getCode());
                 handleKeyPress();
             });
-            canvasPane.getScene().setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
-        });
-        vertexField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) createVertex();
+            newValue.setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
         });
     }
 
@@ -107,62 +107,26 @@ public class Canvas3DController {
         });
     }
 
-    private void createVertex() {
-        Vertex3D vertex = Vertex3D.fromString(vertexField.getText());
-        vertexField.clear();
-        canvasPane.getCanvas().addVertex(vertex);
-        transformCanvas();
-        setObjectsCount();
+    private void deleteObjects() {
+        model.getCanvas().removeObjects(new HashSet<>(model.getSelectedObjects()));
+        model.setObjectCount(model.getObjectCount() - model.getSelectedObjects().size());
+        model.getSelectedObjects().clear();
     }
-
     private void createPlane() {
-        if (selectedObjects.size() != 3) return;
-        List<Vertex3D> selectedVertices = selectedObjects.stream()
+//        if (model.getSelectedObjects().size() != 3) return;
+        List<Vertex3D> selectedVertices = model.getSelectedObjects().stream()
                 .filter(object -> object instanceof Vertex3D)
                 .map(vertex -> (Vertex3D) vertex).toList();
-        canvasPane.getCanvas().addPlane(new ArrayList<>(selectedVertices));
-        transformCanvas();
-        setObjectsCount();
+        model.getCanvas().addPlane(new ArrayList<>(selectedVertices));
+        model.setObjectCount(model.getObjectCount() + 1);
     }
 
     private void transformCanvas() {
-        rotation.setText(String.format("X: %d° Y: %d° Z: %d°", Math.round(xyRotation), Math.round(xyRotation), Math.round(zRotation)));
-        canvasPane.getCanvas().transform(
-                -1 * xyRotation * Math.PI / 180,
-                xyRotation * Math.PI / 180,
-                zRotation * Math.PI / 180,
-                scale
+        model.getCanvas().transform(
+                -1 * model.getXyRotation() * Math.PI / 180,
+                model.getXyRotation() * Math.PI / 180,
+                model.getZRotation() * Math.PI / 180,
+                model.getScale()
         );
     }
-
-    private void deleteObjects() {
-        canvasPane.getCanvas().removeObjects(selectedObjects);
-        if (canvasTabs.getTabs().size() > 1) {
-            removeObjectTab();
-        }
-        setObjectsCount();
-    }
-
-
-    private void setObjectsCount() {
-        objectCount.setText("Объекты: " + (canvasPane.getCanvas().getObjects().size() - 1));
-    }
-
-    private void createObjectTab(GeometricalObject object) {
-        ObjectTab objectTab = switch (object) {
-            case Vertex3D vertex -> new Vertex3DTab(vertex);
-            default -> null;
-        };
-        if (objectTab == null) {
-            return;
-        }
-        canvasTabs.getTabs().add(objectTab);
-        canvasTabs.getSelectionModel().select(objectTab);
-    }
-
-    private void removeObjectTab() {
-        Tab objectTab = canvasTabs.getTabs().remove(1);
-        canvasTabs.getTabs().remove(objectTab);
-    }
 }
-

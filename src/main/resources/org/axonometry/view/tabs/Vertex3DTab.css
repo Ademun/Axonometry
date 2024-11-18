@@ -1,0 +1,16 @@
+.button-delete {
+    -fx-background-color: #f44336;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-radius: 4px;
+    -fx-border-color: red;
+    -fx-font-weight: bold;
+}
+
+.button-delete:hover {
+  -fx-background-color: #f6685e;
+  -fx-cursor: hand;
+}
+
+.button-delete:active {
+  -fx-background-color: #f44336;
+}

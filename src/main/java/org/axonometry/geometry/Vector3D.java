@@ -3,9 +3,9 @@ package org.axonometry.geometry;
 import java.util.Arrays;
 
 public class Vector3D extends Matrix {
-    private final double x;
-    private final double y;
-    private final double z;
+    public final double x;
+    public final double y;
+    public final double z;
     public Vector3D(double[][] data) {
         super(data);
         if (data.length > 3) throw new IllegalArgumentException("Vector3D can have only 3 values");
@@ -18,9 +18,9 @@ public class Vector3D extends Matrix {
     }
     public Vector3D(Vertex3D a, Vertex3D b) {
         super(new double[][] {
-                {b.getCoordinates().getX() - a.getCoordinates().getX()},
-                {b.getCoordinates().getY() - a.getCoordinates().getY()},
-                {b.getCoordinates().getZ() - a.getCoordinates().getZ()}
+                {b.getCoordinates().x - a.getCoordinates().x},
+                {b.getCoordinates().y - a.getCoordinates().y},
+                {b.getCoordinates().z - a.getCoordinates().z}
         });
         x = getData()[0][0];
         y = getData()[1][0];
@@ -51,13 +51,13 @@ public class Vector3D extends Matrix {
         });
     }
     public static double scalarProduct(Vector3D a, Vector3D b) {
-        return a.getX() * b.getX() + a.getY() * b.getY() + a.getZ() * b.getZ();
+        return a.x * b.x + a.y * b.y + a.z * b.z;
     }
     public static Vector3D vectorProduct(Vector3D a, Vector3D b) {
         return new Vector3D(new double[][]{
-                {a.getY() * b.getZ() - a.getZ() * b.getY()},
-                {a.getZ() * b.getX() - a.getX() * b.getZ()},
-                {a.getX() * b.getY() - a.getY() * b.getX()}
+                {a.y * b.z - a.z * b.y},
+                {a.z * b.x - a.x * b.z},
+                {a.x * b.y - a.y * b.x}
         });
     }
     public static double mixedProduct(Vector3D a, Vector3D b, Vector3D c) {
@@ -81,22 +81,6 @@ public class Vector3D extends Matrix {
     }
 
     public String toString() {
-        return "Vector3D{" +
-                "x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                '}';
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getZ() {
-        return z;
+        return String.format("(%f, %f, %f)", x, y, z);
     }
 }

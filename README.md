@@ -1,3 +1,3 @@
-P to create a plane
+P to create a polygon
 
 DEL to delete a vertex

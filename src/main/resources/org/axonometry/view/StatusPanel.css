@@ -1,0 +1,6 @@
+.status-panel {
+    -fx-background-color: #0d1017;
+    -fx-border-style: solid hidden hidden hidden;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b4048;
+}

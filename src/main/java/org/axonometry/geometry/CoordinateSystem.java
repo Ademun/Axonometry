@@ -42,10 +42,10 @@ public class CoordinateSystem implements GeometricalObject {
             LinearGradient axisGradient = new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE, stops);
             gc.setStroke(axisGradient);
             gc.strokeLine(
-                    transformForDrawing(vertices[i].getCoordinates()).getX(),
-                    transformForDrawing(vertices[i].getCoordinates()).getZ(),
-                    transformForDrawing(vertices[vertices.length / 2 + i].getCoordinates()).getX(),
-                    transformForDrawing(vertices[vertices.length / 2 + i].getCoordinates()).getZ()
+                    transformForDrawing(vertices[i].getCoordinates()).x,
+                    transformForDrawing(vertices[i].getCoordinates()).z,
+                    transformForDrawing(vertices[vertices.length / 2 + i].getCoordinates()).x,
+                    transformForDrawing(vertices[vertices.length / 2 + i].getCoordinates()).z
             );
         });
     }
@@ -53,14 +53,17 @@ public class CoordinateSystem implements GeometricalObject {
     public static Vector3D transformForDrawing(Vector3D coordinate) {
         Rectangle2D bounds = Screen.getPrimary().getBounds();
         return new Vector3D(new double[][]{
-                {-1 * coordinate.getX() + bounds.getMaxX() / 2},
-                {coordinate.getY()},
-                {-1 * coordinate.getZ() + bounds.getMaxY() / 2}
+                {-1 * coordinate.x + bounds.getMaxX() / 2},
+                {coordinate.y},
+                {-1 * coordinate.z + bounds.getMaxY() / 2}
         });
     }
 
+    @Override
     public String toString() {
-        return "XYZ";
+        return "CoordinateSystem{" +
+                "vertices=" + Arrays.toString(vertices) +
+                '}';
     }
 
     public Vertex3D[] getVertices() {
