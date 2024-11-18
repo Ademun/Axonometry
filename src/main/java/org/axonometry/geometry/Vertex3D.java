@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.axonometry.geometry.CoordinateSystem.transformForDrawing;
-public class Vertex3D implements GeometricalObject, Clickable {
+public class Vertex3D implements GeometricalObject, Selectable {
     private String name;
     private final Vector3D coordinates;
     private final double radius;

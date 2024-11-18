@@ -41,9 +41,7 @@ public class Canvas3D extends Canvas {
     public void update() {
         gc.setFill(Color.rgb(1, 4, 9));
         gc.fillRect(0, 0, 1960, 1080);
-        for (GeometricalObject object : transformedObjects) {
-            object.draw(gc);
-        }
+        transformedObjects.forEach(object -> object.draw(gc));
     }
 
     public void transform(double rx, double ry, double rz, double scale) {
@@ -72,37 +70,46 @@ public class Canvas3D extends Canvas {
     }
     public void removeObjects(HashSet<GeometricalObject> selectedObjects) {
         ArrayList<Integer> indices = new ArrayList<>();
-        for (GeometricalObject geometricalObject: selectedObjects) {
-            int objectId = objects.indexOf(geometricalObject);
+        selectedObjects.forEach(object -> {
+            int objectId = objects.indexOf(object);
             indices.addFirst(objectId);
-        }
+        });
         indices.stream().sorted(Comparator.reverseOrder()).forEach(id -> {
-            objects.remove((int) id);
-            transformedObjects.remove((int) id);
+            objects.remove(id.intValue());
+            transformedObjects.remove(id.intValue());
         });
     }
-    public GeometricalObject getClickedObject(double x, double y, boolean resetSelection) {
-        if (resetSelection) {
-            transformedObjects.stream()
-                    .filter(object -> object instanceof Clickable)
-                    .forEach(object -> ((Clickable) object).setIsSelected(false));
-        }
-        List<GeometricalObject> clickedObjectsSorted = sortClickedObjects(x, y);
-        if (clickedObjectsSorted.isEmpty()) {
-            return null;
-        }
-        return clickedObjectsSorted.getFirst();
-    }
 
-    private List<GeometricalObject> sortClickedObjects(double x, double y) {
-        return objects.stream()
+    public GeometricalObject getSelectedObject(double x, double y, boolean resetSelection) {
+        if (resetSelection) {
+            resetObjectsSelection();
+        }
+        List<GeometricalObject> selectedObjects = objects.stream()
                 .filter(object -> {
-                    if (object instanceof Clickable) {
+                    if (object instanceof Selectable) {
                         int objectId = objects.indexOf(object);
-                         return ((Clickable) transformedObjects.get(objectId)).isClicked(x, y);
+                        return ((Selectable) transformedObjects.get(objectId)).isClicked(x, y);
                     }
                     return false;
-                })
+                }).toList();
+        List<GeometricalObject> sortedSelectedObjects = sortObjectsByZValue(selectedObjects);
+        if (sortedSelectedObjects.isEmpty()) {
+            return null;
+        }
+        return sortedSelectedObjects.getFirst();
+    }
+
+    private void resetObjectsSelection() {
+        objects.stream()
+                .filter(object -> object instanceof Selectable)
+                .forEach(object -> ((Selectable) object).setIsSelected(false));
+        transformedObjects.stream()
+                .filter(object -> object instanceof Selectable)
+                .forEach(object -> ((Selectable) object).setIsSelected(false));
+    }
+
+    private List<GeometricalObject> sortObjectsByZValue(List<GeometricalObject> objectList) {
+        return objectList.stream()
                 .sorted(Comparator.comparing(object ->
                         Arrays.stream(object.getVertices())
                                 .sorted(Comparator.comparing(vertex -> vertex.getCoordinates().z))
@@ -118,9 +125,13 @@ public class Canvas3D extends Canvas {
             if (objectId == -1) {
                 return;
             }
+            GeometricalObject originalObject = objects.get(objectId);
+            if (originalObject instanceof Selectable) {
+                ((Selectable) originalObject).setIsSelected(true);
+            }
             GeometricalObject transformedObject = transformedObjects.get(objectId);
-            if (transformedObject instanceof Clickable) {
-                ((Clickable) transformedObject).setIsSelected(true);
+            if (transformedObject instanceof Selectable) {
+                ((Selectable) transformedObject).setIsSelected(true);
             }
         });
     }

@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <TabPane xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         fx:id="canvasTabs"
+         stylesheets="@TabPanel.css"
+         fx:id="tabPanel"
          focusTraversable="false"
-         styleClass="tab__panel">
+         styleClass="tab-panel">
     <Tab closable="false" text="Создать" styleClass="tab">
-        <VBox prefHeight="Infinity" prefWidth="250.0">
+        <VBox prefHeight="Infinity" prefWidth="250.0" spacing="8" styleClass="container">
             <padding>
-                <Insets left="25.0" right="25.0" top="15.0"/>
+                <Insets left="16.0" top="12.0" right="16.0"/>
             </padding>
+            <Label text="Создать точку">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Label>
             <TextField fx:id="vertexCreationField" styleClass="text__field" promptText="A (x, y, z)"/>
         </VBox>
     </Tab>

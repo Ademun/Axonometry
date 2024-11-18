@@ -80,7 +80,7 @@ public class Canvas3DController {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     boolean isShiftPressed = pressedKeys.contains(KeyCode.SHIFT);
                     canvasPane.requestFocus();
-                    GeometricalObject selectedObject = model.getCanvas().getClickedObject(event.getX() - 250, event.getY() - 25, !isShiftPressed);
+                    GeometricalObject selectedObject = model.getCanvas().getSelectedObject(event.getX() - 250, event.getY() - 25, !isShiftPressed);
                     if (!isShiftPressed) {
                         model.getSelectedObjects().clear();
                     }

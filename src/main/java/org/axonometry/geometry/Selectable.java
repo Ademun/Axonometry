@@ -1,6 +1,6 @@
 package org.axonometry.geometry;
 
-public interface Clickable {
+public interface Selectable {
     //Проверяет, находится ли точка (x, y) в области фигуры
     boolean isClicked(double x, double y);
 

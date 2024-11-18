@@ -4,13 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.axonometry.models.Canvas3DModel;
 
-public class StatusBarController {
+public class StatusPanelController {
     private final Canvas3DModel model;
     @FXML
     public Label objectCount;
     public Label rotation;
 
-    public StatusBarController(Canvas3DModel model) {
+    public StatusPanelController(Canvas3DModel model) {
         this.model = model;
     }
 

@@ -14,14 +14,14 @@ import org.axonometry.models.Canvas3DModel;
 
 import java.io.IOException;
 
-public class TabsController {
+public class TabPanelController {
     private final Canvas3DModel model;
     @FXML
-    TabPane canvasTabs;
+    TabPane tabPanel;
     @FXML
     TextField vertexCreationField;
 
-    public TabsController(Canvas3DModel model) {
+    public TabPanelController(Canvas3DModel model) {
         this.model = model;
     }
 
@@ -33,8 +33,8 @@ public class TabsController {
     private void setListeners() {
         model.getSelectedObjects().addListener((ListChangeListener<? super GeometricalObject>) observable -> {
             var selectedObjectsList = observable.getList();
-            if (canvasTabs.getTabs().size() > 1) {
-                canvasTabs.getTabs().remove(1);
+            if (tabPanel.getTabs().size() > 1) {
+                tabPanel.getTabs().remove(1);
             }
             if (!selectedObjectsList.isEmpty()) {
                 try {
@@ -67,10 +67,9 @@ public class TabsController {
                 loader.setLocation(Application.class.getResource(""));
             }
         }
-        ;
         Tab objectTab = loader.load();
-        canvasTabs.getTabs().add(objectTab);
-        canvasTabs.getSelectionModel().select(objectTab);
+        tabPanel.getTabs().add(objectTab);
+        tabPanel.getSelectionModel().select(objectTab);
     }
 
     private void createVertexFromString(String vertexString) {

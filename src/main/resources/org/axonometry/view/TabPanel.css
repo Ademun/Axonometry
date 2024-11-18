@@ -1,0 +1,42 @@
+.tab-panel {
+    -fx-background-color: #0d1017;
+    -fx-border-style: hidden solid hidden hidden;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b4048;
+}
+
+.tab-panel .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-panel .tab {
+    -fx-border-style: solid solid hidden solid;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b4048;
+    -fx-border-radius: 4px 4px 0px 0px;
+    -fx-background-color: #0d1017;
+    -fx-background-insets: 0 0 -2 0;
+    -fx-border-insets: 0 0 -2 0;
+    -fx-text-fill: #f1f6fc;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.tab-panel .tab:hover {
+    -fx-background-color: #5f6369;
+    -fx-cursor: hand;
+}
+.tab-panel .tab:selected {
+    -fx-background-color: #212830;
+}
+.tab-panel .container {
+    -fx-border-style: solid hidden hidden hidden;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b4048;
+}
+.tab-panel .container .text__field {
+    -fx-padding: 4px 8px;
+    -fx-background-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-border-color: #3b4048;
+}
