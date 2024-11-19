@@ -1,3 +1,3 @@
 P to create a polygon
 
-DEL to delete a vertex
+DEL to delete a point

@@ -1,3 +1,16 @@
+.switch-projections .thumb {
+    -fx-background-radius: 2px
+}
+
+.switch-projections .thumb-area {
+    -fx-background-radius: 2px;
+    -fx-background-color: #f44336;
+}
+
+.switch-projections:selected .thumb-area {
+    -fx-background-color: #38914a;
+}
+
 .button-delete {
     -fx-background-color: #f44336;
     -fx-border-style: hidden hidden hidden hidden;

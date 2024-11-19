@@ -32,6 +32,7 @@
     -fx-border-style: solid hidden hidden hidden;
     -fx-border-width: 2px;
     -fx-border-color: #3b4048;
+    -fx-spacing: 8px;
 }
 .tab-panel .container .text__field {
     -fx-padding: 4px 8px;

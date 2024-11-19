@@ -7,9 +7,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.axonometry.Application;
 import org.axonometry.geometry.GeometricalObject;
-import org.axonometry.geometry.Vertex3D;
+import org.axonometry.geometry.Point3D;
 import org.axonometry.models.Canvas3DModel;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class TabPanelController {
     @FXML
     TabPane tabPanel;
     @FXML
-    TextField vertexCreationField;
+    TextField pointCreationField;
 
     public TabPanelController(Canvas3DModel model) {
         this.model = model;
@@ -47,20 +48,23 @@ public class TabPanelController {
     }
 
     private void setHandlers() {
-        vertexCreationField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                createVertexFromString(vertexCreationField.getText());
-                vertexCreationField.clear();
-            }
-        });
+        pointCreationField.setOnKeyPressed(this::handlePointCreation);
+    }
+
+    private void handlePointCreation(KeyEvent event) {
+        if (event.getCode() != KeyCode.ENTER) {
+            return;
+        }
+        createPointFromString(pointCreationField.getText());
+        pointCreationField.clear();
     }
 
     private void addObjectTab(GeometricalObject object) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         switch (object) {
-            case Vertex3D vertex -> {
-                Vertex3DTabController controller = new Vertex3DTabController(model, vertex);
-                loader.setLocation(Application.class.getResource("view/tabs/Vertex3DTab.fxml"));
+            case Point3D point -> {
+                Point3DTabController controller = new Point3DTabController(model, point);
+                loader.setLocation(Application.class.getResource("view/tabs/Point3DTab.fxml"));
                 loader.setController(controller);
             }
             default -> {
@@ -72,11 +76,11 @@ public class TabPanelController {
         tabPanel.getSelectionModel().select(objectTab);
     }
 
-    private void createVertexFromString(String vertexString) {
-        Vertex3D vertex = Vertex3D.fromString(vertexString);
-        model.getCanvas().addVertex(vertex);
+    private void createPointFromString(String pointString) {
+        Point3D point = Point3D.fromString(pointString);
+        model.getCanvas().addPoint(point);
         model.setObjectCount(model.getObjectCount() + 1);
         model.getSelectedObjects().clear();
-        model.getSelectedObjects().add(vertex);
+        model.getSelectedObjects().add(point);
     }
 }

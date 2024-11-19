@@ -1,7 +1,7 @@
 module org.acsonometry {
     requires javafx.controls;
     requires javafx.fxml;
-    requires org.kordamp.bootstrapfx.core;
+    requires org.controlsfx.controls;
 
     opens org.axonometry to javafx.fxml;
     exports org.axonometry;

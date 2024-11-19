@@ -51,14 +51,14 @@ public class Canvas3D extends Canvas {
                 ));
     }
 
-    public void addVertex(Vertex3D vertex) {
-        objects.add(vertex);
-        transformedObjects.add(vertex);
+    public void addPoint(Point3D point) {
+        objects.add(point);
+        transformedObjects.add(point);
     }
 
-    public void addPlane(ArrayList<Vertex3D> vertices) {
+    public void addPlane(ArrayList<Point3D> points) {
         Random random = new Random();
-        Polygon polygon = new Polygon(vertices.toArray(Vertex3D[]::new), Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.25));
+        Polygon polygon = new Polygon(points.toArray(Point3D[]::new), Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.25));
         objects.add(polygon);
         transformedObjects.add(polygon);
     }
@@ -86,9 +86,10 @@ public class Canvas3D extends Canvas {
         }
         List<GeometricalObject> selectedObjects = objects.stream()
                 .filter(object -> {
-                    if (object instanceof Selectable) {
-                        int objectId = objects.indexOf(object);
-                        return ((Selectable) transformedObjects.get(objectId)).isClicked(x, y);
+                    int objectId = objects.indexOf(object);
+                    GeometricalObject selectedObject = transformedObjects.get(objectId);
+                    if (selectedObject instanceof Selectable selectable) {
+                        return selectable.isClicked(x, y);
                     }
                     return false;
                 }).toList();
@@ -100,20 +101,24 @@ public class Canvas3D extends Canvas {
     }
 
     private void resetObjectsSelection() {
-        objects.stream()
-                .filter(object -> object instanceof Selectable)
-                .forEach(object -> ((Selectable) object).setIsSelected(false));
-        transformedObjects.stream()
-                .filter(object -> object instanceof Selectable)
-                .forEach(object -> ((Selectable) object).setIsSelected(false));
+        objects.forEach(object -> {
+            if (object instanceof Selectable selectable) {
+                selectable.setIsSelected(false);
+            }
+        });
+        transformedObjects.forEach(object -> {
+            if (object instanceof Selectable selectable) {
+                selectable.setIsSelected(false);
+            }
+        });
     }
 
     private List<GeometricalObject> sortObjectsByZValue(List<GeometricalObject> objectList) {
         return objectList.stream()
                 .sorted(Comparator.comparing(object ->
-                        Arrays.stream(object.getVertices())
-                                .sorted(Comparator.comparing(vertex -> vertex.getCoordinates().z))
-                                .toArray(Vertex3D[]::new)
+                        Arrays.stream(object.getPoints())
+                                .sorted(Comparator.comparing(point -> point.getCoordinates().z))
+                                .toArray(GeometricalPoint[]::new)
                                 [0].getCoordinates().z
                 ))
                 .toList();
@@ -126,16 +131,15 @@ public class Canvas3D extends Canvas {
                 return;
             }
             GeometricalObject originalObject = objects.get(objectId);
-            if (originalObject instanceof Selectable) {
-                ((Selectable) originalObject).setIsSelected(true);
+            if (originalObject instanceof Selectable selectable) {
+                selectable.setIsSelected(true);
             }
             GeometricalObject transformedObject = transformedObjects.get(objectId);
-            if (transformedObject instanceof Selectable) {
-                ((Selectable) transformedObject).setIsSelected(true);
+            if (transformedObject instanceof Selectable selectable) {
+                selectable.setIsSelected(true);
             }
         });
     }
-
     public ArrayList<GeometricalObject> getObjects() {
         return objects;
     }

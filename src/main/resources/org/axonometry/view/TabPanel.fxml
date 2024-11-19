@@ -14,7 +14,7 @@
          focusTraversable="false"
          styleClass="tab-panel">
     <Tab closable="false" text="Создать" styleClass="tab">
-        <VBox prefHeight="Infinity" prefWidth="250.0" spacing="8" styleClass="container">
+        <VBox prefHeight="Infinity" prefWidth="250.0" styleClass="container">
             <padding>
                 <Insets left="16.0" top="12.0" right="16.0"/>
             </padding>
@@ -23,7 +23,7 @@
                     <Font name="System Bold" size="14.0"/>
                 </font>
             </Label>
-            <TextField fx:id="vertexCreationField" styleClass="text__field" promptText="A (x, y, z)"/>
+            <TextField fx:id="pointCreationField" styleClass="text__field" promptText="A (x, y, z)"/>
         </VBox>
     </Tab>
 </TabPane>

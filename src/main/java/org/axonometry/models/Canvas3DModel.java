@@ -26,6 +26,15 @@ public class Canvas3DModel {
         this.selectedObjects = FXCollections.observableArrayList();
     }
 
+    public void transformCanvas() {
+        canvas.transform(
+                -1 * Math.toRadians(xyRotation.get()),
+                Math.toRadians(xyRotation.get()),
+                Math.toRadians(zRotation.get()),
+                scale.get()
+        );
+    }
+
     public int getObjectCount() {
         return objectCount.get();
     }

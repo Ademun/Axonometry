@@ -1,5 +1,6 @@
 package org.axonometry.geometry;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class Vector3D extends Matrix {
@@ -16,7 +17,7 @@ public class Vector3D extends Matrix {
         y = getData()[1][0];
         z = getData()[2][0];
     }
-    public Vector3D(Vertex3D a, Vertex3D b) {
+    public Vector3D(Point3D a, Point3D b) {
         super(new double[][] {
                 {b.getCoordinates().x - a.getCoordinates().x},
                 {b.getCoordinates().y - a.getCoordinates().y},
@@ -70,17 +71,18 @@ public class Vector3D extends Matrix {
     public static boolean areCoplanar(Vector3D a, Vector3D b, Vector3D c) {
         return mixedProduct(a, b, c) == 0;
     }
-    public static boolean areOrthogonal(Vector3D ...vertices) {
-        for (int i = 0; i < vertices.length; i++) {
-            for (int j = 0; j < vertices.length; j++) {
+    public static boolean areOrthogonal(Vector3D ...points) {
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points.length; j++) {
                 if (j == i) continue;
-                if (scalarProduct(vertices[i], vertices[j]) != 0) return false;
+                if (scalarProduct(points[i], points[j]) != 0) return false;
             }
         }
         return true;
     }
 
     public String toString() {
-        return String.format("(%f, %f, %f)", x, y, z);
+        DecimalFormat df = new DecimalFormat("0.#");
+        return String.format("(%s, %s, %s)", df.format(x), df.format(y), df.format(z));
     }
 }
