@@ -4,10 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import org.axonometry.geometry.GeometricalObject;
 import org.axonometry.geometry.Point3D;
 import org.axonometry.geometry.Projection;
 import org.axonometry.models.Canvas3DModel;
 import org.controlsfx.control.ToggleSwitch;
+
+import java.util.HashSet;
 
 public class Point3DTabController {
     private final Canvas3DModel model;
@@ -36,6 +39,7 @@ public class Point3DTabController {
         this.point = point;
     }
     public void initialize() {
+        System.out.println(point.isProjecting());
         setListeners();
         setHandlers();
         titleLabel.setText("Информация о точке " + point.getName());
@@ -45,7 +49,7 @@ public class Point3DTabController {
         XYProjectionLabel.setText(String.format("XY %s", projections[0].getCoordinates().toString()));
         XZProjectionLabel.setText(String.format("XZ %s", projections[1].getCoordinates().toString()));
         YZProjectionLabel.setText(String.format("YZ %s", projections[2].getCoordinates().toString()));
-        projectionsToggle.setSelected(true);
+        projectionsToggle.setSelected(point.isProjecting());
     }
 
     public void setHandlers() {
@@ -54,7 +58,7 @@ public class Point3DTabController {
 
     private void setListeners() {
         projectionsToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            point.setEnableProjections(newValue);
+            point.setProjecting(newValue);
             model.transformCanvas();
         });
     }
@@ -62,7 +66,9 @@ public class Point3DTabController {
 
     private void handlePointDeletion() {
         model.getSelectedObjects().clear();
-        model.getCanvas().removeObject(point);
+        HashSet<GeometricalObject> temp = new HashSet<>();
+        temp.add(point);
+        model.getCanvas().removeObjects(temp);
     }
 
 }

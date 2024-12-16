@@ -7,6 +7,7 @@ import javafx.scene.input.*;
 import javafx.stage.Screen;
 import org.axonometry.CanvasPane;
 import org.axonometry.geometry.GeometricalObject;
+import org.axonometry.geometry.Line3D;
 import org.axonometry.geometry.Point3D;
 import org.axonometry.models.Canvas3DModel;
 
@@ -42,8 +43,8 @@ public class Canvas3DController {
         model.scaleProperty().addListener(args -> model.transformCanvas());
         model.objectCountProperty().addListener(args -> model.transformCanvas());
         model.getSelectedObjects().addListener((ListChangeListener<? super GeometricalObject>) observable -> {
-            var selectedObjectsList =  observable.getList();
-            model.getCanvas().highlightObjects(new ArrayList<>(selectedObjectsList));
+            model.getCanvas().highlightObjects(new ArrayList<>(observable.getList()));
+            model.transformCanvas();
         });
     }
 
@@ -94,7 +95,7 @@ public class Canvas3DController {
         pressedKeys.forEach(keyCode -> {
             switch (keyCode) {
                 case DELETE -> deleteObjects();
-                case P -> createPlane();
+                case L -> createLine();
             }
         });
     }
@@ -119,11 +120,15 @@ public class Canvas3DController {
         model.setObjectCount(model.getObjectCount() - model.getSelectedObjects().size());
         model.getSelectedObjects().clear();
     }
-    private void createPlane() {
+
+    private void createLine() {
         List<Point3D> selectedPoints = model.getSelectedObjects().stream()
                 .filter(object -> object instanceof Point3D)
                 .map(point -> (Point3D) point).toList();
-        model.getCanvas().addPlane(new ArrayList<>(selectedPoints));
+        Line3D line = new Line3D(selectedPoints.toArray(Point3D[]::new));
+        model.getCanvas().addLine(line);
         model.setObjectCount(model.getObjectCount() + 1);
+        model.getSelectedObjects().clear();
+        model.getSelectedObjects().add(line);
     }
 }

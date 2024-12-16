@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import static org.axonometry.geometry.CoordinateSystem.transformForDrawing;
 import static org.axonometry.geometry.Matrix.getRotationalMatrix;
 
-public class Point3D extends GeometricalPoint implements GeometricalObject, Selectable {
+public class Point3D extends GeometricalPoint implements GeometricalObject, Selectable, Projectable {
     private final Projection[] projections;
-    private boolean enableProjections = true;
+    private boolean isProjecting = false;
     private boolean isSelected = false;
     private final int CLICK_AREA = 48;
 
@@ -21,11 +21,11 @@ public class Point3D extends GeometricalPoint implements GeometricalObject, Sele
         this.projections = generateProjections();
     }
 
-    public Point3D(String name, Vector3D coordinates, Projection[] projections, boolean isSelected, boolean enableProjections) {
+    private Point3D(String name, Vector3D coordinates, Projection[] projections, boolean isSelected, boolean isProjecting) {
         super(name, coordinates);
         this.projections = projections;
         this.isSelected = isSelected;
-        this.enableProjections = enableProjections;
+        this.isProjecting = isProjecting;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class Point3D extends GeometricalPoint implements GeometricalObject, Sele
                 .rotate(getRotationalMatrix(new Vector3D(new double[][]{{0}, {1}, {0}}), ry))
                 .rotate(getRotationalMatrix(new Vector3D(new double[][]{{0}, {0}, {1}}), rz))
                 .scale(scale).getCoordinates().getData());
-        return new Point3D(name, transformedCoordinates, transformedProjections, isSelected, enableProjections);
+        return new Point3D(name, transformedCoordinates, transformedProjections, isSelected, isProjecting);
     }
 
     private Point3D rotate(Matrix rm) {
@@ -53,7 +53,7 @@ public class Point3D extends GeometricalPoint implements GeometricalObject, Sele
 
     public void draw(GraphicsContext gc) {
         super.draw(gc);
-        if (enableProjections) {
+        if (isProjecting) {
             drawProjections(gc);
         }
         if (isSelected) {
@@ -61,9 +61,11 @@ public class Point3D extends GeometricalPoint implements GeometricalObject, Sele
         }
     }
 
-    private void drawProjections(GraphicsContext gc) {
-        gc.setLineDashes(20);
-        gc.setStroke(Color.rgb(255, 255, 255, 0.5));
+    public void drawProjections(GraphicsContext gc) {
+        gc.save();
+        gc.setLineDashes(8);
+        gc.setLineDashOffset(2);
+        gc.setStroke(Color.WHITE.desaturate().darker());
         Arrays.stream(projections).forEach(projection -> {
             gc.strokeLine(
                     transformForDrawing(projection.getCoordinates()).x,
@@ -73,28 +75,27 @@ public class Point3D extends GeometricalPoint implements GeometricalObject, Sele
             );
             projection.draw(gc);
         });
-        gc.setLineDashes(0);
-        gc.setStroke(Color.WHITE);
+        gc.restore();
     }
 
     private void drawSelectionCircle(GraphicsContext gc) {
+        gc.save();
         gc.setFill(Color.rgb(255, 140, 0, 0.5));
         gc.fillOval(
                 transformForDrawing(coordinates).x - POINT_RADIUS * 2,
                 transformForDrawing(coordinates).z - POINT_RADIUS * 2, POINT_RADIUS * 4, POINT_RADIUS * 4
         );
-        gc.setFill(Color.WHITE);
         gc.setStroke(Color.ORANGE);
         gc.strokeOval(
                 transformForDrawing(coordinates).x - POINT_RADIUS * 2,
                 transformForDrawing(coordinates).z - POINT_RADIUS * 2, POINT_RADIUS * 4, POINT_RADIUS * 4
         );
-        gc.setStroke(Color.WHITE);
+        gc.restore();
     }
 
     @Override
-    public boolean isClicked(double x, double y) {
-        return Math.pow(x - transformForDrawing(this.coordinates).x - POINT_RADIUS, 2) + Math.pow(y - transformForDrawing(this.coordinates).z - POINT_RADIUS / 2, 2) <= CLICK_AREA;
+    public boolean isClicked(double x, double z) {
+        return Math.pow(x - transformForDrawing(this.coordinates).x - POINT_RADIUS, 2) + Math.pow(z - transformForDrawing(this.coordinates).z - POINT_RADIUS / 2, 2) <= CLICK_AREA;
     }
 
     private Projection[] generateProjections() {
@@ -130,20 +131,20 @@ public class Point3D extends GeometricalPoint implements GeometricalObject, Sele
         return projections;
     }
 
-    public boolean getIsSelected() {
+    public boolean getSelected() {
         return isSelected;
     }
 
-    public void setIsSelected(boolean selected) {
+    public void setSelected(boolean selected) {
         isSelected = selected;
     }
 
-    public boolean isEnableProjections() {
-        return enableProjections;
+    public boolean isProjecting() {
+        return isProjecting;
     }
 
-    public void setEnableProjections(boolean enableProjections) {
-        this.enableProjections = enableProjections;
+    public void setProjecting(boolean projecting) {
+        this.isProjecting = projecting;
     }
 
     @Override

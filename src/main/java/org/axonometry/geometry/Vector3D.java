@@ -17,7 +17,8 @@ public class Vector3D extends Matrix {
         y = getData()[1][0];
         z = getData()[2][0];
     }
-    public Vector3D(Point3D a, Point3D b) {
+
+    public Vector3D(GeometricalPoint a, GeometricalPoint b) {
         super(new double[][] {
                 {b.getCoordinates().x - a.getCoordinates().x},
                 {b.getCoordinates().y - a.getCoordinates().y},
@@ -68,14 +69,26 @@ public class Vector3D extends Matrix {
     public static boolean areCollinear(Vector3D a, Vector3D b) {
         return vectorProduct(a, b).mag() == 0;
     }
-    public static boolean areCoplanar(Vector3D a, Vector3D b, Vector3D c) {
-        return mixedProduct(a, b, c) == 0;
-    }
-    public static boolean areOrthogonal(Vector3D ...points) {
-        for (int i = 0; i < points.length; i++) {
-            for (int j = 0; j < points.length; j++) {
+
+    public static boolean areCoplanar(Vector3D... vectors) {
+        System.out.println(Arrays.toString(vectors));
+        for (int i = 0; i < vectors.length; i++) {
+            for (int j = 0; j < vectors.length; j++) {
                 if (j == i) continue;
-                if (scalarProduct(points[i], points[j]) != 0) return false;
+                for (int k = 0; k < vectors.length; k++) {
+                    if (k == i || k == j) continue;
+                    if (mixedProduct(vectors[i], vectors[j], vectors[k]) != 0) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean areOrthogonal(Vector3D... vectors) {
+        for (int i = 0; i < vectors.length; i++) {
+            for (int j = 0; j < vectors.length; j++) {
+                if (j == i) continue;
+                if (scalarProduct(vectors[i], vectors[j]) != 0) return false;
             }
         }
         return true;

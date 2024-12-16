@@ -33,9 +33,10 @@ public class Projection extends GeometricalPoint implements GeometricalObject {
     }
     @Override
     public void draw(GraphicsContext gc) {
+        gc.save();
         Font oldFont = gc.getFont();
         gc.setFont(new Font(oldFont.getName(), oldFont.getSize() * 0.95));
-        gc.setFill(Color.rgb(255, 255, 255, 0.85));
+        gc.setFill(Color.WHITE.desaturate().darker());
         gc.fillOval(
                 transformForDrawing(coordinates).x - POINT_RADIUS / 2,
                 transformForDrawing(coordinates).z - POINT_RADIUS / 2, POINT_RADIUS, POINT_RADIUS
@@ -45,8 +46,7 @@ public class Projection extends GeometricalPoint implements GeometricalObject {
                 transformForDrawing(coordinates).x - POINT_RADIUS,
                 transformForDrawing(coordinates).z - POINT_RADIUS * 2
         );
-        gc.setFont(oldFont);
-        gc.setFill(Color.WHITE);
+        gc.restore();
     }
 
     @Override

@@ -1,9 +1,9 @@
 package org.axonometry.geometry;
 
 public interface Selectable {
-    //Проверяет, находится ли точка (x, y) в области фигуры
-    boolean isClicked(double x, double y);
+    //Проверяет, находится ли точка (x, z) в области фигуры
+    boolean isClicked(double x, double z);
 
-    void setIsSelected(boolean clicked);
-    boolean getIsSelected();
+    void setSelected(boolean clicked);
+    boolean getSelected();
 }

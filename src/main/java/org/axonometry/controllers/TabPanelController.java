@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.axonometry.Application;
 import org.axonometry.geometry.GeometricalObject;
+import org.axonometry.geometry.Line3D;
 import org.axonometry.geometry.Point3D;
 import org.axonometry.models.Canvas3DModel;
 
@@ -48,7 +49,7 @@ public class TabPanelController {
     }
 
     private void setHandlers() {
-        pointCreationField.setOnKeyPressed(this::handlePointCreation);
+        pointCreationField.setOnKeyPressed(event -> handlePointCreation(event));
     }
 
     private void handlePointCreation(KeyEvent event) {
@@ -67,8 +68,13 @@ public class TabPanelController {
                 loader.setLocation(Application.class.getResource("view/tabs/Point3DTab.fxml"));
                 loader.setController(controller);
             }
+            case Line3D line -> {
+                Line3DTabController controller = new Line3DTabController(model, line);
+                loader.setLocation(Application.class.getResource("view/tabs/Line3DTab.fxml"));
+                loader.setController(controller);
+            }
             default -> {
-                loader.setLocation(Application.class.getResource(""));
+                return;
             }
         }
         Tab objectTab = loader.load();

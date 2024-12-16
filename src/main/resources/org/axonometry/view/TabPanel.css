@@ -41,3 +41,20 @@
     -fx-border-radius: 4px;
     -fx-border-color: #3b4048;
 }
+
+.tab-panel .container .button-delete {
+    -fx-background-color: #f44336;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-radius: 4px;
+    -fx-border-color: red;
+    -fx-font-weight: bold;
+}
+
+.tab-panel .container .button-delete:hover {
+  -fx-background-color: #f6685e;
+  -fx-cursor: hand;
+}
+
+.tab-panel .container .button-delete:active {
+  -fx-background-color: #f44336;
+}

@@ -9,6 +9,7 @@ import javafx.util.Duration;
 import org.axonometry.geometry.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Canvas3D extends Canvas {
@@ -32,7 +33,7 @@ public class Canvas3D extends Canvas {
 
     private void initAnimation() {
         Timeline timeline = new Timeline();
-        KeyFrame updateLoop = new KeyFrame(Duration.seconds(0.001), e -> this.update());
+        KeyFrame updateLoop = new KeyFrame(Duration.millis(4), e -> this.update());
         timeline.getKeyFrames().add(updateLoop);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -56,23 +57,24 @@ public class Canvas3D extends Canvas {
         transformedObjects.add(point);
     }
 
-    public void addPlane(ArrayList<Point3D> points) {
-        Random random = new Random();
-        Polygon polygon = new Polygon(points.toArray(Point3D[]::new), Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255), 0.25));
-        objects.add(polygon);
-        transformedObjects.add(polygon);
+    public void addLine(Line3D line) {
+        objects.add(line);
+        transformedObjects.add(line);
     }
 
-    public void removeObject(GeometricalObject object) {
-        int objectId = objects.indexOf(object);
-        objects.remove(objectId);
-        transformedObjects.remove(objectId);
+
+
+    private Set<GeometricalObject> getObjectsContainingPoint(Point3D point) {
+        return objects.stream()
+                .filter(obj -> Arrays.stream(obj.getPoints()).toList().contains(point))
+                .collect(Collectors.toCollection(HashSet::new));
     }
-    public void removeObjects(HashSet<GeometricalObject> selectedObjects) {
-        ArrayList<Integer> indices = new ArrayList<>();
+
+    public void removeObjects(Set<GeometricalObject> selectedObjects) {
+        HashSet<Integer> indices = new HashSet<>();
         selectedObjects.forEach(object -> {
             int objectId = objects.indexOf(object);
-            indices.addFirst(objectId);
+            indices.add(objectId);
         });
         indices.stream().sorted(Comparator.reverseOrder()).forEach(id -> {
             objects.remove(id.intValue());
@@ -103,12 +105,12 @@ public class Canvas3D extends Canvas {
     private void resetObjectsSelection() {
         objects.forEach(object -> {
             if (object instanceof Selectable selectable) {
-                selectable.setIsSelected(false);
+                selectable.setSelected(false);
             }
         });
         transformedObjects.forEach(object -> {
             if (object instanceof Selectable selectable) {
-                selectable.setIsSelected(false);
+                selectable.setSelected(false);
             }
         });
     }
@@ -124,7 +126,12 @@ public class Canvas3D extends Canvas {
                 .toList();
     }
 
-    public void highlightObjects(ArrayList<GeometricalObject> selectedObjects) {
+    public void highlightObjects(List<GeometricalObject> selectedObjects) {
+        objects.forEach(object -> {
+            if (object instanceof Selectable selectable) {
+                selectable.setSelected(false);
+            }
+        });
         selectedObjects.forEach(object -> {
             int objectId = objects.indexOf(object);
             if (objectId == -1) {
@@ -132,15 +139,11 @@ public class Canvas3D extends Canvas {
             }
             GeometricalObject originalObject = objects.get(objectId);
             if (originalObject instanceof Selectable selectable) {
-                selectable.setIsSelected(true);
-            }
-            GeometricalObject transformedObject = transformedObjects.get(objectId);
-            if (transformedObject instanceof Selectable selectable) {
-                selectable.setIsSelected(true);
+                selectable.setSelected(true);
             }
         });
     }
-    public ArrayList<GeometricalObject> getObjects() {
+    public List<GeometricalObject> getObjects() {
         return objects;
     }
 }

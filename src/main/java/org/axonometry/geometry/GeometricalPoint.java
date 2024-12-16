@@ -3,6 +3,9 @@ package org.axonometry.geometry;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import static org.axonometry.geometry.CoordinateSystem.transformForDrawing;
 
 public abstract class GeometricalPoint implements Transformable, Drawable {
@@ -19,6 +22,7 @@ public abstract class GeometricalPoint implements Transformable, Drawable {
 
     @Override
     public void draw(GraphicsContext gc) {
+        gc.save();
         gc.setFill(Color.WHITE);
         gc.fillOval(
                 transformForDrawing(coordinates).x - POINT_RADIUS,
@@ -29,6 +33,7 @@ public abstract class GeometricalPoint implements Transformable, Drawable {
                 transformForDrawing(coordinates).x - POINT_RADIUS * 2,
                 transformForDrawing(coordinates).z - POINT_RADIUS * 4
         );
+        gc.restore();
     }
 
     private Location determineLocation() {
@@ -80,6 +85,15 @@ public abstract class GeometricalPoint implements Transformable, Drawable {
                 }
             }
         }
+    }
+    public static boolean areCoplanar(GeometricalPoint[] points) {
+        if (points.length <= 3) {
+            return true;
+        }
+        Vector3D[] vectors = new Vector3D[3];
+        IntStream.range(1, 4).forEach(i -> vectors[i - 1] = new Vector3D(points[0], points[i]));
+        System.out.println(Arrays.toString(vectors));
+        return Vector3D.areCoplanar(vectors);
     }
     public String toString() {
         return String.format("%s %s", name, coordinates.toString());

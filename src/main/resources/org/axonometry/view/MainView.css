@@ -7,3 +7,16 @@
    -fx-border-width: 2px;
    -fx-border-color: #3b4048;
 }
+
+.toggle-switch .thumb {
+    -fx-background-radius: 2px
+}
+
+.toggle-switch .thumb-area {
+    -fx-background-radius: 2px;
+    -fx-background-color: #f44336;
+}
+
+.toggle-switch:selected .thumb-area {
+    -fx-background-color: #38914a;
+}
