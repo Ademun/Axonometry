@@ -1,3 +1,3 @@
-P to create a polygon
+L to create a line
 
-DEL to delete a point
+DEL to delete an object
